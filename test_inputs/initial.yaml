@@ -3,6 +3,7 @@
     - Teste2
 
 - BasicType:
+    comment: Basic type
     type:
       a:
         type: string
