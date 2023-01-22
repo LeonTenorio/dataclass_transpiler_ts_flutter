@@ -1,0 +1,39 @@
+- imports:
+    - Teste1
+    - Teste2
+
+- BasicType:
+    type:
+      a:
+        type: string
+      b:
+        type: string
+      c:
+        type: string
+
+- BasicTypeWithNullableAndOptional:
+    type:
+      a:
+        type: string
+        nullable: true
+      b:
+        type: string
+        optional: true
+      c:
+        type: string
+
+- TypeWithUnion:
+    type:
+      c:
+        type: string
+      d:
+        type: string
+      union:
+        - BasicType
+
+- TypeWithIntersection:
+    type:
+      e:
+        type: string
+      intersection:
+        - BasicType
