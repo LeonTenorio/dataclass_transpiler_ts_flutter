@@ -72,11 +72,12 @@ class TypeDefinition:
 class TypeFieldDefinition:
     def __init__(self, name, yaml_content):
         self.name = name
-        self.type_definion, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
+        self.type_definion, self.comment, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
     def _get_type_field_definition(self, yaml_content):
         nullable = False
         optional = False
         type_definition = None
+        comment = None
 
         for item in yaml_content:
             for key in item.keys():
@@ -87,11 +88,14 @@ class TypeFieldDefinition:
                     nullable = get_boolean_of_yaml(content)
                 elif(key == reserved_optional):
                     optional = get_boolean_of_yaml(content)
+                elif(key == reserved_comment):
+                    comment = content
         
-        return type_definition, nullable, optional
+        return type_definition, comment, nullable, optional
 
     def __str__(self):
         return 'TypeFieldDefinition(name:' + self.name + \
+               ', comment: ' + nullable_text(self.comment) + \
                ', nullable: ' + str(self.nullable) + \
                ', optional: ' + str(self.optional) + ')'
                
@@ -102,6 +106,7 @@ reserved_date = 'date'
 reserved_string = 'string'
 
 reserved_type = 'type'
+reserved_comment = 'comment'
 reserved_nullable = 'nullable'
 reserved_optional = 'optional'
 

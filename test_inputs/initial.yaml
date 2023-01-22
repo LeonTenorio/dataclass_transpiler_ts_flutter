@@ -6,6 +6,7 @@
     comment: Basic type
     type:
       a:
+        comment: Basic type a object field comment
         type: string
       b:
         type: string
