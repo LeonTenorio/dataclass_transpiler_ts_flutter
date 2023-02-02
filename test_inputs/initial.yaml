@@ -33,9 +33,27 @@
       union:
         - BasicType
 
+- TypeWithMultipleUnion:
+    type:
+      c:
+        type: string
+      d:
+        type: string
+      union:
+        - BasicType
+        - BasicTypeWithNullableAndOptional
+
 - TypeWithIntersection:
     type:
       e:
         type: string
       intersection:
         - BasicType
+
+- TypeWithMultipleIntersection:
+    type:
+      e:
+        type: string
+      intersection:
+        - BasicType
+        - BasicTypeWithNullableAndOptional
