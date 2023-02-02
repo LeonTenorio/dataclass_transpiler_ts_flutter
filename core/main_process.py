@@ -2,6 +2,7 @@ import os
 import sys
 from utils.yaml_utils import get_yaml_file_list, read_yaml_content
 from definition.yaml_definition import YamlDefinition
+from synthesis.synthesis import synthesis_yaml_definition
 
 yaml_folder_path = sys.argv[1]
 
@@ -23,4 +24,5 @@ os.chdir(core_folder_path)
 
 for yaml_file in  yaml_files:
     definition = YamlDefinition(yaml_file['filename'], yaml_file['content'])
-    print(definition)
+    ts_text = synthesis_yaml_definition(definition)
+    print(ts_text)
