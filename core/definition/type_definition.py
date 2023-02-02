@@ -72,7 +72,7 @@ class TypeDefinition:
 class TypeFieldDefinition:
     def __init__(self, name, yaml_content):
         self.name = name
-        self.type_definion, self.comment, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
+        self.type_definition, self.comment, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
     def _get_type_field_definition(self, yaml_content):
         nullable = False
         optional = False
