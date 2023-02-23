@@ -17,3 +17,15 @@ def nullable_element_function(element, nullable_function, not_nullable_function)
         return nullable_function()
     else:
         return not_nullable_function(element)
+
+def reduce_array(array, reduce_two_elements):
+    result = None
+    for element in array:
+        if(result==None):
+            result = element
+        else:
+            result = reduce_two_elements(result, element)
+    return result
+
+def replace_all(source, expression, new_value):
+    return new_value.join(source.split(expression))

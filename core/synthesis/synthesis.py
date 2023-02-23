@@ -5,9 +5,11 @@ core_folder_path = os.path.abspath((os.path.dirname(sys.argv[0])))
 sys.path.append(core_folder_path + '/synthesis/')
 
 from typescript_synthesis import ts_synthesis_of_class
+from dart_synthesis import dart_synthesis_of_classes
 
 def synthesis_yaml_definition(yaml_definition):
     ts_text = ''
+    dart_text = ''
 
     yaml_imports = yaml_definition.imports
     if(len(yaml_imports)>0):
@@ -19,5 +21,6 @@ def synthesis_yaml_definition(yaml_definition):
     
     for class_definition in yaml_definition.classes:
         ts_text = ts_text + ts_synthesis_of_class(map_of_classes, class_definition.name)
+        dart_text = dart_text + dart_synthesis_of_classes(map_of_classes, class_definition.name)
 
-    return ts_text
+    return ts_text, dart_text
