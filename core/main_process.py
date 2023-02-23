@@ -26,4 +26,3 @@ os.chdir(core_folder_path)
 for yaml_file in  yaml_files:
     definition = YamlDefinition(yaml_file['filename'], yaml_file['content'])
     ts_text, dart_text = synthesis_yaml_definition(definition, output_folder_path)
-    print(dart_text)
