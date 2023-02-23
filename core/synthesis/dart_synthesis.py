@@ -138,7 +138,7 @@ def _get_dart_text_of_class(class_definition):
             intersection_object_name, intersection_additional_text = _get_text_of_type_definition(intersection, class_name + 'Intersection' + str(index), use_hive)
             additional_text = additional_text + intersection_additional_text
 
-            deserialization_text = deserialization_text + '    this._values.push(' + intersection_object_name + '.fromJson(json));\n'
+            deserialization_text = deserialization_text + '    this._values.add(' + intersection_object_name + '.fromJson(json));\n'
             as_final_classes_text = as_final_classes_text + '  ' + intersection_object_name + ' as' + intersection_object_name + '(){\n'+ \
                                     '    return this._values[' + str(index) + '];\n' + \
                                     '  }\n'
