@@ -25,7 +25,7 @@ def _ts_text_of_type_definition(type_definition, line_indentation = ''):
         object_field_comment = object_field.comment
         if(object_field_comment != None):
             complex_type_text = complex_type_text + _create_comment(object_field_comment, line_indentation = line_indentation + '  ')
-        complex_type_text = complex_type_text + '  ' + object_field_name
+        complex_type_text = complex_type_text + '  ' + line_indentation + object_field_name
         object_field_optional = object_field.optional
         if(object_field_optional):
             complex_type_text = complex_type_text + '?'
@@ -34,7 +34,7 @@ def _ts_text_of_type_definition(type_definition, line_indentation = ''):
         if(object_field_nullable):
             complex_type_text = complex_type_text + ' | null'
         complex_type_text = complex_type_text + ';\n'
-    complex_type_text = complex_type_text + '}'
+    complex_type_text = complex_type_text + line_indentation + '}'
     
     unions = type_definition.unions
     has_unions = False
