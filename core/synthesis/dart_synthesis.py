@@ -63,7 +63,7 @@ def _get_dart_text_of_class(class_definition):
             class_text = replace_all(class_text, main_class_name, main_class_name + 'MainUnionType')
 
         deserialization_text = '  late final Object _value;\n\n' + \
-                              '  factory ' + union_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
+                              '  ' + union_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
                               '    final deserializationFunctions = [\n'
         as_final_classes_text = ''
         serialization_text = '  Map<String, dynamic> toJson(){\n' + \
@@ -120,7 +120,7 @@ def _get_dart_text_of_class(class_definition):
         elif(main_class_name!=None):
             class_text = replace_all(class_text, main_class_name, main_class_name + 'MainIntersectionType')
 
-        deserialization_text = '  factory ' + intersection_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
+        deserialization_text = '  ' + intersection_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
                                '    this._values = [];\n'
         as_final_classes_text = ''
         serialization_text = '  Map<String, dynamic> toJson(){\n' + \
