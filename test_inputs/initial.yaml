@@ -12,6 +12,7 @@
         type: string
       c:
         type: string
+    exportable: True
 
 - BasicTypeWithNullableAndOptional:
     type:
@@ -23,6 +24,7 @@
         optional: true
       c:
         type: string
+    exportable: True
 
 - TypeWithUnion:
     type:
@@ -32,6 +34,7 @@
         type: string
       union:
         - BasicType
+    exportable: True
 
 - TypeWithMultipleUnion:
     type:
@@ -42,6 +45,7 @@
       union:
         - BasicType
         - BasicTypeWithNullableAndOptional
+    exportable: True
 
 - TypeWithIntersection:
     type:
@@ -49,6 +53,7 @@
         type: string
       intersection:
         - BasicType
+    exportable: True
 
 - TypeWithMultipleIntersection:
     type:
@@ -57,6 +62,7 @@
       intersection:
         - BasicType
         - BasicTypeWithNullableAndOptional
+    exportable: True
 
 - NestedType:
     comment: Nested type
@@ -69,3 +75,4 @@
         type:
           a:
             type: string
+    exportable: True
