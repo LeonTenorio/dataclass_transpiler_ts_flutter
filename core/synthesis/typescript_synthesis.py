@@ -29,7 +29,10 @@ def _ts_text_of_type_definition(type_definition, line_indentation = ''):
         object_field_optional = object_field.optional
         if(object_field_optional):
             complex_type_text = complex_type_text + '?'
-        complex_type_text = complex_type_text + ': ' + _ts_text_of_type_definition(object_field.type_definition, line_indentation = line_indentation + '  ')
+        object_field_ts_text_type = _ts_text_of_type_definition(object_field.type_definition, line_indentation = line_indentation + '  ')
+        if(object_field_ts_text_type.endswith(';\n')):
+            object_field_ts_text_type = object_field_ts_text_type[:-2]
+        complex_type_text = complex_type_text + ': ' + object_field_ts_text_type
         object_field_nullable = object_field.nullable
         if(object_field_nullable):
             complex_type_text = complex_type_text + ' | null'
