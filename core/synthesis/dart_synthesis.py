@@ -124,7 +124,8 @@ def _get_dart_text_of_class(class_definition):
                                '    this._values = [];\n'
         as_final_classes_text = ''
         serialization_text = '  Map<String, dynamic> toJson(){\n' + \
-                             '    return this._values.map((e) => e.toJson()).reduce((a, b) => a..addAll(b));\n'
+                             '    return this._values.map((e) => e.toJson()).reduce((a, b) => a..addAll(b));\n' + \
+                             '  }\n'
         
         intersections_to_create_object = class_type_definition_intersections.copy()
         
@@ -147,7 +148,8 @@ def _get_dart_text_of_class(class_definition):
                      '  late final List<Object> _values;\n\n' + \
                      deserialization_text + '\n' + \
                      serialization_text + '\n' + \
-                     as_final_classes_text
+                     as_final_classes_text + \
+                     '}\n'
 
     return class_text + additional_text
 
