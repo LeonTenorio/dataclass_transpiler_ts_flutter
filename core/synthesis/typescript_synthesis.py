@@ -9,7 +9,7 @@ def ts_synthesis_of_class(map_of_classes, class_key):
     class_text = _create_comment(class_comment)
     if(class_exportable):
         class_text = class_text + 'export '
-    class_text = class_text + 'type ' + class_name + ' = ' + _ts_text_of_type_definition(class_type_definition)
+    class_text = class_text + 'type ' + class_name + ' = ' + _ts_text_of_type_definition(class_type_definition) + '\n'
 
     return class_text
 
