@@ -26,6 +26,8 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
         for yaml_import in yaml_imports:
             ts_imports = _add_if_not_in_list(yaml_import, ts_imports)
 
+    exportable_classes = []
+
     map_of_classes = {}
     for class_definition in yaml_definition.classes:
         map_of_classes[class_definition.name] = class_definition
@@ -33,6 +35,9 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     for class_definition in yaml_definition.classes:
         ts_text = ts_text + ts_synthesis_of_class(map_of_classes, class_definition.name)
         dart_text = dart_text + dart_synthesis_of_classes(map_of_classes, class_definition.name)
+
+        if(class_definition.exportable):
+            exportable_classes.append(class_definition.name)
 
     if('@Hive' in dart_text):
         dart_imports.append('package:hive_flutter/hive_flutter.dart')
@@ -53,7 +58,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     _save_generated_output_code(dart_text, file_name, 'dart', output_folder_path)
     _save_generated_output_code(ts_text, file_name, 'ts', output_folder_path)
 
-    return ts_text, dart_text
+    return file_name, exportable_classes
 
 def _add_if_not_in_list(element, list):
     if(element not in list):
