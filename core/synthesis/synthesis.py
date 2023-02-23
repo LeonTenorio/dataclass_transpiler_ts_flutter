@@ -15,6 +15,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     dart_text = "\n\npart '" + file_name + ".freezed.dart';\n" + \
                 "part '" + file_name + ".g.dart';\n\n"
 
+    ts_imports = []
     dart_imports = ['package:freezed_annotation/freezed_annotation.dart']
 
     has_dart_class_import = len(yaml_definition.imports) > 0
@@ -22,6 +23,8 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     yaml_imports = yaml_definition.imports
     if(len(yaml_imports)>0):
         ts_text = ts_text + "import {\n  "+',\n  '.join(yaml_imports)+"\n} from 'index.dart';\n\n"
+        for yaml_import in yaml_imports:
+            ts_imports = _add_if_not_in_list(yaml_import, ts_imports)
 
     map_of_classes = {}
     for class_definition in yaml_definition.classes:
@@ -48,6 +51,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     dart_text = map_and_join_array(dart_imports, lambda x: "import '" + x + "';", lambda array: '\n'.join(array)) + dart_text
 
     _save_generated_output_code(dart_text, file_name, 'dart', output_folder_path)
+    _save_generated_output_code(ts_text, file_name, 'ts', output_folder_path)
 
     return ts_text, dart_text
 
