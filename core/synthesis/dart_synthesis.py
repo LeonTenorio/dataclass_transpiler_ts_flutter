@@ -57,7 +57,10 @@ def _get_dart_text_of_class(class_definition):
                      '}\n'
 
     if(class_type_definition_unions!=None):
-        union_class_name = class_name + 'Union'
+        union_class_name = class_name
+
+        if(main_class_name!=None):
+            class_text = replace_all(class_text, main_class_name, main_class_name + 'MainUnionType')
 
         deserialization_text = '  late final Object _value;\n\n' + \
                               '  factory ' + union_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
@@ -68,7 +71,7 @@ def _get_dart_text_of_class(class_definition):
         unions_to_create_object = class_type_definition_unions.copy()
         
         if(main_class_name!=None):
-            unions_to_create_object.append(main_class_name)
+            unions_to_create_object.append(main_class_name + 'MainUnionType')
         
         for index, union in enumerate(unions_to_create_object):
             union_object_name, union_additional_text = _get_text_of_type_definition(union, class_name + 'Union' + str(index), use_hive)
@@ -111,7 +114,11 @@ def _get_dart_text_of_class(class_definition):
                                   '}\n'
 
     if(class_type_definition_intersections!=None):
-        intersection_class_name = class_name + 'Intersection'
+        intersection_class_name = class_name
+        if(union_class_name!=None):
+            class_text = replace_all(class_text, union_class_name, union_class_name + 'MainIntersectionType')
+        elif(main_class_name!=None):
+            class_text = replace_all(class_text, main_class_name, main_class_name + 'MainIntersectionType')
 
         deserialization_text = '  factory ' + intersection_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
                                '    this._values = [];\n'
@@ -122,9 +129,9 @@ def _get_dart_text_of_class(class_definition):
         intersections_to_create_object = class_type_definition_intersections.copy()
         
         if(union_class_name!=None):
-            intersections_to_create_object.append(union_class_name)
+            intersections_to_create_object.append(union_class_name + 'MainIntersectionType')
         elif(main_class_name!=None):
-            intersections_to_create_object.append(main_class_name)
+            intersections_to_create_object.append(main_class_name + 'MainIntersectionType')
         
         for index, intersection in enumerate(intersections_to_create_object):
             intersection_object_name, intersection_additional_text = _get_text_of_type_definition(intersection, class_name + 'Intersection' + str(index), use_hive)
