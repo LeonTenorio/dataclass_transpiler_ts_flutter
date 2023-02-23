@@ -140,7 +140,7 @@ def _get_dart_text_of_class(class_definition):
 
             deserialization_text = deserialization_text + '    this._values.add(' + intersection_object_name + '.fromJson(json));\n'
             as_final_classes_text = as_final_classes_text + '  ' + intersection_object_name + ' as' + intersection_object_name + '(){\n'+ \
-                                    '    return this._values[' + str(index) + '];\n' + \
+                                    '    return this._values[' + str(index) + '] as ' +intersection_object_name + ';\n'\
                                     '  }\n'
         deserialization_text = deserialization_text + '  }\n'
 
