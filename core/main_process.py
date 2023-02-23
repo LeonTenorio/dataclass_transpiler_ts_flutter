@@ -5,6 +5,7 @@ from definition.yaml_definition import YamlDefinition
 from synthesis.synthesis import synthesis_yaml_definition
 
 yaml_folder_path = sys.argv[1]
+output_folder_path = os.path.join(os.getcwd(), sys.argv[2])
 
 core_folder_path = os.path.abspath((os.path.dirname(sys.argv[0])))
 
@@ -24,5 +25,5 @@ os.chdir(core_folder_path)
 
 for yaml_file in  yaml_files:
     definition = YamlDefinition(yaml_file['filename'], yaml_file['content'])
-    ts_text = synthesis_yaml_definition(definition)
-    print(ts_text)
+    ts_text, dart_text = synthesis_yaml_definition(definition, output_folder_path)
+    print(dart_text)
