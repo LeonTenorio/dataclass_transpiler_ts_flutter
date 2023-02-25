@@ -9,14 +9,14 @@ from general_utils import reduce_array, replace_all
 from class_definition import ClassDefinition
 from type_definition import TypeDefinition
 
-def dart_synthesis_of_classes(map_of_classes, class_key):
+def dart_synthesis_of_classes(map_of_classes, class_key, dart_hive_type_ids):
     class_definition = map_of_classes[class_key]
 
-    class_text = class_text = _get_dart_text_of_class(class_definition)
+    class_text = class_text = _get_dart_text_of_class(class_definition, dart_hive_type_ids)
 
     return class_text
 
-def _get_dart_text_of_class(class_definition):
+def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
     class_name = class_definition.name
     class_type_definition = class_definition.class_type
     class_comment = class_definition.comment
@@ -45,7 +45,12 @@ def _get_dart_text_of_class(class_definition):
                      '  const factory ' + class_name + '({\n'
 
         for field in class_type_definition_object_fields:
-            field_text, field_additional_text = _get_text_of_type_field_definition(field, class_name, use_hive)
+            field_text, field_additional_text = _get_text_of_type_field_definition(
+                field, 
+                class_name, 
+                use_hive,
+                dart_hive_type_ids
+            )
             class_text = class_text + field_text  + ',\n'
             additional_text = additional_text + field_additional_text
 
@@ -74,7 +79,11 @@ def _get_dart_text_of_class(class_definition):
             unions_to_create_object.append(main_class_name + 'MainUnionType')
         
         for index, union in enumerate(unions_to_create_object):
-            union_object_name, union_additional_text = _get_text_of_type_definition(union, class_name + 'Union' + str(index), use_hive)
+            union_object_name, union_additional_text = _get_text_of_type_definition(
+                union, class_name + 'Union' + str(index), 
+                use_hive,
+                dart_hive_type_ids
+            )
             additional_text = additional_text + union_additional_text
 
             deserialization_text = deserialization_text + '      (json) => ' + union_object_name + '.fromJson(json),\n'
@@ -135,7 +144,12 @@ def _get_dart_text_of_class(class_definition):
             intersections_to_create_object.append(main_class_name + 'MainIntersectionType')
         
         for index, intersection in enumerate(intersections_to_create_object):
-            intersection_object_name, intersection_additional_text = _get_text_of_type_definition(intersection, class_name + 'Intersection' + str(index), use_hive)
+            intersection_object_name, intersection_additional_text = _get_text_of_type_definition(
+                intersection, 
+                class_name + 'Intersection' + str(index), 
+                use_hive,
+                dart_hive_type_ids
+            )
             additional_text = additional_text + intersection_additional_text
 
             deserialization_text = deserialization_text + '    this._values.add(' + intersection_object_name + '.fromJson(json));\n'
@@ -151,9 +165,28 @@ def _get_dart_text_of_class(class_definition):
                      as_final_classes_text + \
                      '}\n'
 
+    if(use_hive):
+        hive_text = ''
+        hive_class_name = ''
+        
+        if(intersection_class_name!=None):
+            hive_class_name = main_class_name + 'MainIntersectionType'
+        elif(union_class_name!=None):
+            hive_class_name = main_class_name + 'MainUnionType'
+        else:
+            hive_class_name = main_class_name
+        if(hive_class_name != None and len(hive_class_name)!=0):
+            text_to_find = '  const factory ' + class_name + '({\n'
+            class_text = replace_all(
+                class_text, 
+                text_to_find, 
+                '  @HiveTypeId(typeId: ' + dart_hive_type_ids.get_hive_type_id(hive_class_name) + ')\n' + \
+                text_to_find
+            )   
+
     return class_text + additional_text
 
-def _get_text_of_type_definition(type_definition, base_name, use_hive):
+def _get_text_of_type_definition(type_definition, base_name, use_hive, dart_hive_type_ids):
     if(type(type_definition)==str):
         return type_definition, ''
 
@@ -168,11 +201,12 @@ def _get_text_of_type_definition(type_definition, base_name, use_hive):
             False,
             use_hive,
             False
-        )
+        ),
+        dart_hive_type_ids
     )
 
 
-def _get_text_of_type_field_definition(type_field_definition, father_class_name, use_hive):
+def _get_text_of_type_field_definition(type_field_definition, father_class_name, use_hive, dart_hive_type_ids):
     field_text = ''
     additional_text = ''
 
@@ -202,7 +236,8 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
                 False,
                 use_hive,
                 False
-            )
+            ),
+            dart_hive_type_ids
         )
     if(type_field_definition.nullable):
         field_text = field_text + '? '

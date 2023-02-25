@@ -26,7 +26,8 @@ for file in yaml_file_list:
 os.chdir(core_folder_path)
 
 dart_index_file_text = "export './include_in_output/date_time_converter.dart';\n" + \
-                       "export './include_in_output/models_box.dart';\n"
+                       "export './include_in_output/models_box.dart';\n" + \
+                       "export './hive_type_ids.dart';\n"
 ts_index_file_text = ''
 
 subprocess.Popen("cp -R '" + os.path.join(os.getcwd(), "include_in_output/") + "' '" + output_folder_path[:-1] + "'", shell=True)

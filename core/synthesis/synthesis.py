@@ -8,6 +8,7 @@ sys.path.append(core_folder_path + '/utils/')
 from typescript_synthesis import ts_synthesis_of_class
 from dart_synthesis import dart_synthesis_of_classes
 from general_utils import map_and_join_array, replace_all
+from dart_hive_ids_control import DartHiveTypeIds
 
 def synthesis_yaml_definition(yaml_definition, output_folder_path):
     file_name = replace_all(replace_all(yaml_definition.file_name, './', ''), '.yaml', '')
@@ -31,10 +32,12 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     map_of_classes = {}
     for class_definition in yaml_definition.classes:
         map_of_classes[class_definition.name] = class_definition
+
+    dart_hive_type_ids = DartHiveTypeIds(output_folder_path)
     
     for class_definition in yaml_definition.classes:
         ts_text = ts_text + ts_synthesis_of_class(map_of_classes, class_definition.name)
-        dart_text = dart_text + dart_synthesis_of_classes(map_of_classes, class_definition.name)
+        dart_text = dart_text + dart_synthesis_of_classes(map_of_classes, class_definition.name, dart_hive_type_ids)
 
         if(class_definition.exportable):
             exportable_classes.append(class_definition.name)
@@ -52,6 +55,8 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
         dart_imports = _add_if_not_in_list('./core/datetime_converter.dart', dart_imports)
     if('Tuple2' in dart_text):
         dart_imports = _add_if_not_in_list('package:package:dartz/dartz.dart', dart_imports)
+    if('HiveTypeIds.' in dart_text):
+        dart_imports = _add_if_not_in_list('./hive_type_ids.dart', dart_imports)
     if(has_dart_class_import):
         dart_imports = _add_if_not_in_list('./index.dart', dart_imports)
 
@@ -59,6 +64,8 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
 
     _save_generated_output_code(dart_text, file_name, 'dart', output_folder_path)
     _save_generated_output_code(ts_text, file_name, 'ts', output_folder_path)
+
+    dart_hive_type_ids.save_hive_type_ids()
 
     return file_name, exportable_classes
 
