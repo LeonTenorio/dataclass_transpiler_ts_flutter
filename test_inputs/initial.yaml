@@ -13,6 +13,7 @@
       c:
         type: string
     exportable: True
+    useHive: True
 
 - BasicTypeWithNullableAndOptional:
     type:
@@ -46,6 +47,7 @@
         - BasicType
         - BasicTypeWithNullableAndOptional
     exportable: True
+    useHive: True
 
 - TypeWithIntersection:
     type:
@@ -76,3 +78,4 @@
           a:
             type: string
     exportable: True
+    useHive: True
