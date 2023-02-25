@@ -61,7 +61,7 @@ def _save_hive_type_ids(map_of_dart_hive_type_id_for_objects, output_path):
 def _get_hive_type_ids_output_text(map_of_dart_hive_type_id_for_objects):
     effective_dart_hive_type_id_list = []
     for dart_hive_type_id_for_object in list(map_of_dart_hive_type_id_for_objects.values()):
-        if(dart_hive_type_id_for_object.field_in_use != None):
+        if(dart_hive_type_id_for_object.field_in_use):
             effective_dart_hive_type_id_list.append(dart_hive_type_id_for_object)
     __fill_list_dart_hive_type_id_for_object_index(effective_dart_hive_type_id_list)
 
