@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package:dartz/dartz.dart';
+import './hive_type_ids.dart';
 import './index.dart';
 
 part 'initial.freezed.dart';
@@ -8,6 +10,7 @@ part 'initial.g.dart';
 /// Basic type 
 @freezed
 class BasicType with _$BasicType {
+  @HiveTypeId(typeId: HiveTypeIds.BasicType)
   const factory BasicType({
     /// Basic type a object field comment 
     required String a,
@@ -230,6 +233,7 @@ class TypeWithMultipleIntersection {
 /// Nested type 
 @freezed
 class NestedType with _$NestedType {
+  @HiveTypeId(typeId: HiveTypeIds.NestedType)
   const factory NestedType({
     required String a,
     required String b,
@@ -244,6 +248,7 @@ class NestedType with _$NestedType {
 /// additional type of field c from class NestedType 
 @freezed
 class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
+  @HiveTypeId(typeId: HiveTypeIds.cAdditionalTypeNestedType)
   const factory cAdditionalTypeNestedType({
     required String a,
   }) = _cAdditionalTypeNestedType;
