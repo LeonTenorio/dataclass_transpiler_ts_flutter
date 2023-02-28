@@ -6,7 +6,7 @@ sys.path.append(core_folder_path + '/synthesis/')
 sys.path.append(core_folder_path + '/utils/')
 
 from typescript_synthesis import ts_synthesis_of_class
-from dart_synthesis import dart_synthesis_of_classes
+from dart_synthesis import dart_synthesis_of_elements
 from general_utils import map_and_join_array, replace_all
 from dart_hive_ids_control import DartHiveTypeIds
 
@@ -27,20 +27,20 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
         for yaml_import in yaml_imports:
             ts_imports = _add_if_not_in_list(yaml_import, ts_imports)
 
-    exportable_classes = []
+    exportable_elements = []
 
-    map_of_classes = {}
-    for class_definition in yaml_definition.classes:
-        map_of_classes[class_definition.name] = class_definition
+    map_of_elements = {}
+    for element_definition in yaml_definition.elements:
+        map_of_elements[element_definition.name] = element_definition
 
     dart_hive_type_ids = DartHiveTypeIds(output_folder_path)
     
-    for class_definition in yaml_definition.classes:
-        ts_text = ts_text + ts_synthesis_of_class(map_of_classes, class_definition.name)
-        dart_text = dart_text + dart_synthesis_of_classes(map_of_classes, class_definition.name, dart_hive_type_ids)
+    for element_definition in yaml_definition.elements:
+        ts_text = ts_text + ts_synthesis_of_class(map_of_elements, element_definition.name)
+        dart_text = dart_text + dart_synthesis_of_elements(map_of_elements, element_definition.name, dart_hive_type_ids)
 
-        if(class_definition.exportable):
-            exportable_classes.append(class_definition.name)
+        if(element_definition.exportable):
+            exportable_elements.append(element_definition.name)
 
     if('@Hive' in dart_text):
         dart_imports.append('package:hive_flutter/hive_flutter.dart')
@@ -67,7 +67,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
 
     dart_hive_type_ids.save_hive_type_ids()
 
-    return file_name, exportable_classes
+    return file_name, exportable_elements
 
 def _add_if_not_in_list(element, list):
     if(element not in list):

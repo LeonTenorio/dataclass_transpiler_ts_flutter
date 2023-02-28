@@ -6,27 +6,27 @@ sys.path.append(core_folder_path + '/utils/')
 sys.path.append(core_folder_path + '/definition/')
 
 from general_utils import reduce_array, replace_all
-from class_definition import ClassDefinition
+from element_definition import ElementDefinition
 from type_definition import TypeDefinition
 
-def dart_synthesis_of_classes(map_of_classes, class_key, dart_hive_type_ids):
-    class_definition = map_of_classes[class_key]
+def dart_synthesis_of_elements(map_of_elements, element_key, dart_hive_type_ids):
+    element_definition = map_of_elements[element_key]
 
-    class_text = class_text = _get_dart_text_of_class(class_definition, dart_hive_type_ids)
+    element_text = _get_dart_text_of_element(element_definition, dart_hive_type_ids)
 
-    return class_text
+    return element_text
 
-def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
-    class_name = class_definition.name
-    class_type_definition = class_definition.class_type
-    class_comment = class_definition.comment
+def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
+    element_name = element_definition.name
+    class_type_definition = element_definition.class_type
+    class_comment = element_definition.comment
 
-    class_text = _create_comment(class_comment)
+    element_text = _create_comment(class_comment)
 
     additional_text = ''
 
-    class_type_definition = class_definition.class_type
-    use_hive = class_definition.use_hive
+    class_type_definition = element_definition.class_type
+    use_hive = element_definition.use_hive
 
     class_type_definition_object_fields = class_type_definition.object_fields
 
@@ -38,34 +38,34 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
     intersection_class_name = None
 
     if(class_type_definition_object_fields!=None):
-        main_class_name = class_name
+        main_class_name = element_name
 
-        class_text = class_text + '@freezed\n' + \
-                     'class ' + class_name + ' with _$' + class_name + ' {\n' + \
-                     '  const factory ' + class_name + '({\n'
+        element_text = element_text + '@freezed\n' + \
+                     'class ' + element_name + ' with _$' + element_name + ' {\n' + \
+                     '  const factory ' + element_name + '({\n'
 
         for field in class_type_definition_object_fields:
             field_text, field_additional_text = _get_text_of_type_field_definition(
                 field, 
-                class_name, 
+                element_name, 
                 use_hive,
                 dart_hive_type_ids
             )
-            class_text = class_text + field_text  + ',\n'
+            element_text = element_text + field_text  + ',\n'
             additional_text = additional_text + field_additional_text
 
-        class_text = class_text + '  }) = _' + class_name + ';\n\n' + \
-                     '  factory ' + class_name + '.fromJson(\n' + \
+        element_text = element_text + '  }) = _' + element_name + ';\n\n' + \
+                     '  factory ' + element_name + '.fromJson(\n' + \
                      '    Map<String, dynamic> json,\n' + \
                      '  ) => \n' + \
-                     '    _$' + class_name + 'FromJson(json);\n' + \
+                     '    _$' + element_name + 'FromJson(json);\n' + \
                      '}\n'
 
     if(class_type_definition_unions!=None):
-        union_class_name = class_name
+        union_class_name = element_name
 
         if(main_class_name!=None):
-            class_text = replace_all(class_text, main_class_name, main_class_name + 'MainUnionType')
+            element_text = replace_all(element_text, main_class_name, main_class_name + 'MainUnionType')
 
         deserialization_text = '  late final Object _value;\n\n' + \
                               '  ' + union_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
@@ -80,7 +80,7 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
         
         for index, union in enumerate(unions_to_create_object):
             union_object_name, union_additional_text = _get_text_of_type_definition(
-                union, class_name + 'Union' + str(index), 
+                union, element_name + 'Union' + str(index), 
                 use_hive,
                 dart_hive_type_ids
             )
@@ -116,18 +116,18 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
                              '    }\n' + \
                              '  }\n'
 
-        class_text = class_text + 'class ' + union_class_name + '{\n' + \
+        element_text = element_text + 'class ' + union_class_name + '{\n' + \
                                   deserialization_text + '\n'+ \
                                   serialization_text + '\n' + \
                                   as_final_classes_text + \
                                   '}\n'
 
     if(class_type_definition_intersections!=None):
-        intersection_class_name = class_name
+        intersection_class_name = element_name
         if(union_class_name!=None):
-            class_text = replace_all(class_text, union_class_name, union_class_name + 'MainIntersectionType')
+            element_text = replace_all(element_text, union_class_name, union_class_name + 'MainIntersectionType')
         elif(main_class_name!=None):
-            class_text = replace_all(class_text, main_class_name, main_class_name + 'MainIntersectionType')
+            element_text = replace_all(element_text, main_class_name, main_class_name + 'MainIntersectionType')
 
         deserialization_text = '  ' + intersection_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
                                '    this._values = [];\n'
@@ -146,7 +146,7 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
         for index, intersection in enumerate(intersections_to_create_object):
             intersection_object_name, intersection_additional_text = _get_text_of_type_definition(
                 intersection, 
-                class_name + 'Intersection' + str(index), 
+                element_name + 'Intersection' + str(index), 
                 use_hive,
                 dart_hive_type_ids
             )
@@ -158,7 +158,7 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
                                     '  }\n'
         deserialization_text = deserialization_text + '  }\n'
 
-        class_text = class_text + 'class ' + intersection_class_name + ' {\n' + \
+        element_text = element_text + 'class ' + intersection_class_name + ' {\n' + \
                      '  late final List<Object> _values;\n\n' + \
                      deserialization_text + '\n' + \
                      serialization_text + '\n' + \
@@ -176,15 +176,15 @@ def _get_dart_text_of_class(class_definition, dart_hive_type_ids):
         else:
             hive_class_name = main_class_name
         if(hive_class_name != None and len(hive_class_name)!=0):
-            text_to_find = '  const factory ' + class_name + '({\n'
-            class_text = replace_all(
-                class_text, 
+            text_to_find = '  const factory ' + element_name + '({\n'
+            element_text = replace_all(
+                element_text, 
                 text_to_find, 
                 '  @HiveTypeId(typeId: ' + dart_hive_type_ids.get_hive_type_id(hive_class_name) + ')\n' + \
                 text_to_find
             )   
 
-    return class_text + additional_text
+    return element_text + additional_text
 
 def _get_text_of_type_definition(type_definition, base_name, use_hive, dart_hive_type_ids):
     if(type(type_definition)==str):
@@ -193,8 +193,8 @@ def _get_text_of_type_definition(type_definition, base_name, use_hive, dart_hive
     if(type_definition.simple_type!=None):
         return type_definition.simple_type, ''
     
-    return _get_dart_text_of_class(
-        _create_new_class_definition(
+    return _get_dart_text_of_element(
+        _create_new_element_definition(
             base_name,
             type_definition,
             '',
@@ -223,14 +223,14 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
     else:
         additional_field_type_name = field_name + 'AdditionalType' + father_class_name
         field_text = field_text + additional_field_type_name + ' '
-        additional_class_name = additional_field_type_name
+        additional_element_name = additional_field_type_name
 
         additional_field_comment = 'additional type of field ' + field_name + ' from class ' + father_class_name
         if(field_comment!=None):
             additional_field_comment = additional_field_comment + '\n' + field_comment
-        additional_text = _get_dart_text_of_class(
-            _create_new_class_definition(
-                additional_class_name,
+        additional_text = _get_dart_text_of_element(
+            _create_new_element_definition(
+                additional_element_name,
                 type_definition,
                 additional_field_comment,
                 False,
@@ -246,8 +246,8 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
     return field_text, additional_text
 
 
-def _create_new_class_definition(name, class_type, comment, exportable, use_hive, ts_validation):
-    class_definition = ClassDefinition(name, [])
+def _create_new_element_definition(name, class_type, comment, exportable, use_hive, ts_validation):
+    class_definition = ElementDefinition(name, [])
     class_definition.class_type = class_type
     class_definition.comment = comment
     class_definition.exportable  = exportable

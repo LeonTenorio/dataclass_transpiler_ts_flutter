@@ -9,7 +9,7 @@ from type_definition import TypeDefinition
 from yaml_utils import get_boolean_of_yaml
 from general_utils import nullable_text
 
-class ClassDefinition:
+class ElementDefinition:
     def __init__(self, name, yaml_content):
         self.name = name
         self.class_type, self.comment, self.exportable, self.use_hive, self.ts_validation = self._get_class_definition(yaml_content)
@@ -39,7 +39,7 @@ class ClassDefinition:
         
         return class_type, comment, exportable, use_hive, ts_validation
     def __str__(self):
-        return 'ClassDefinition(name: ' + self.name + \
+        return 'ElementDefinition(name: ' + self.name + \
                ', comment: ' + nullable_text(self.comment) + \
                ', type: ' + str(self.class_type) + \
                ', exportable: ' + str(self.exportable) + \
