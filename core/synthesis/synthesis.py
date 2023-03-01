@@ -5,7 +5,7 @@ core_folder_path = os.path.abspath((os.path.dirname(sys.argv[0])))
 sys.path.append(core_folder_path + '/synthesis/')
 sys.path.append(core_folder_path + '/utils/')
 
-from typescript_synthesis import ts_synthesis_of_class
+from typescript_synthesis import ts_synthesis_of_elements
 from dart_synthesis import dart_synthesis_of_elements
 from general_utils import map_and_join_array, replace_all
 from dart_hive_ids_control import DartHiveTypeIds
@@ -36,7 +36,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
     dart_hive_type_ids = DartHiveTypeIds(output_folder_path)
     
     for element_definition in yaml_definition.elements:
-        ts_text = ts_text + ts_synthesis_of_class(map_of_elements, element_definition.name)
+        ts_text = ts_text + ts_synthesis_of_elements(map_of_elements, element_definition.name)
         dart_text = dart_text + dart_synthesis_of_elements(map_of_elements, element_definition.name, dart_hive_type_ids)
 
         if(element_definition.exportable):

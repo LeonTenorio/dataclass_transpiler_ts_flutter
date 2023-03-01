@@ -1,17 +1,17 @@
-def ts_synthesis_of_class(map_of_classes, class_key):
-    class_definition = map_of_classes[class_key]
+def ts_synthesis_of_elements(map_of_elements, element_key):
+    element_definition = map_of_elements[element_key]
     
-    class_name = class_definition.name
-    class_type_definition = class_definition.class_type
-    class_comment = class_definition.comment
-    class_exportable = class_definition.exportable
+    element_name = element_definition.name
+    class_type_definition = element_definition.class_type
+    element_comment = element_definition.comment
+    element_exportable = element_definition.exportable
 
-    class_text = _create_comment(class_comment)
-    if(class_exportable):
-        class_text = class_text + 'export '
-    class_text = class_text + 'type ' + class_name + ' = ' + _ts_text_of_type_definition(class_type_definition) + '\n'
+    element_text = _create_comment(element_comment)
+    if(element_exportable):
+        element_text = element_text + 'export '
+    element_text = element_text + 'type ' + element_name + ' = ' + _ts_text_of_type_definition(class_type_definition) + '\n'
 
-    return class_text
+    return element_text
 
 def _ts_text_of_type_definition(type_definition, line_indentation = ''):
     simple_type = type_definition.simple_type
