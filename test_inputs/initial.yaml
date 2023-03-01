@@ -103,3 +103,22 @@
             comment: Testing
             value: 3
     exportable: True
+
+- TypeWithInternalEnum:
+    comment: Type with internal enum
+    type:
+      a:
+        type: string
+      b:
+        type: string
+      c:
+        enum:
+          values:
+            - one:
+                value: 1
+                comment: One
+            - two:
+                value: 2
+                comment: Two
+    exportable: True
+    useHive: True
