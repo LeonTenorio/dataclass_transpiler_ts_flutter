@@ -79,3 +79,13 @@
             type: string
     exportable: True
     useHive: True
+
+- SimpleEnum:
+    comment: Simple enum for testing
+    enum:
+      values:
+        - one
+        - two
+        - three:
+            comment: Testing
+    exportable: True
