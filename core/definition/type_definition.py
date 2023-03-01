@@ -88,7 +88,7 @@ class TypeFieldDefinition:
                 if(key == reserved_type):
                     type_definition = TypeDefinition(content)
                 elif(key == reserved_enum):
-                    enum = EnumDefinition(content)
+                    enum = EnumDefinition(self.name, content)
                 elif(key == reserved_nullable):
                     nullable = get_boolean_of_yaml(content)
                 elif(key == reserved_optional):

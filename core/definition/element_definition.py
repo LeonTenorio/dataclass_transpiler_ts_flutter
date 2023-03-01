@@ -39,7 +39,7 @@ class ElementDefinition:
                 elif(key == reserved_comment):
                     comment = content
                 elif(key == reserved_enum):
-                    enum = EnumDefinition(content)
+                    enum = EnumDefinition(self.name, content)
         
         return class_type, enum, comment, exportable, use_hive, ts_validation
     def __str__(self):
@@ -56,3 +56,4 @@ reserved_exportable = 'exportable'
 reserved_use_hive = 'useHive'
 reserved_ts_validation = 'tsValidation'
 reserved_comment = 'comment'
+reserved_enum = 'enum'
