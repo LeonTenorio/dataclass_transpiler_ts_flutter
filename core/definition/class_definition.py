@@ -6,21 +6,19 @@ sys.path.append(core_folder_path + '/definition/')
 sys.path.append(core_folder_path + '/utils/')
 
 from type_definition import TypeDefinition
-from enum_definition import EnumDefinition
 from yaml_utils import get_boolean_of_yaml
 from general_utils import nullable_text
 
-class ElementDefinition:
+class ClassDefinition:
     def __init__(self, name, yaml_content):
         self.name = name
-        self.class_type, self.enum, self.comment, self.exportable, self.use_hive, self.ts_validation = self._get_class_definition(yaml_content)
+        self.class_type, self.comment, self.exportable, self.use_hive, self.ts_validation = self._get_class_definition(yaml_content)
     def _get_class_definition(self, yaml_content):
         class_type = None
         use_hive = False
         ts_validation = False
         exportable = False
         comment = None
-        enum = None
 
         effective_yaml_content = yaml_content
         if(type(effective_yaml_content)!=list):
@@ -38,15 +36,12 @@ class ElementDefinition:
                     ts_validation = get_boolean_of_yaml(content)
                 elif(key == reserved_comment):
                     comment = content
-                elif(key == reserved_enum):
-                    enum = EnumDefinition(content)
         
-        return class_type, enum, comment, exportable, use_hive, ts_validation
+        return class_type, comment, exportable, use_hive, ts_validation
     def __str__(self):
-        return 'ElementDefinition(name: ' + self.name + \
+        return 'ClassDefinition(name: ' + self.name + \
                ', comment: ' + nullable_text(self.comment) + \
-               ', type: ' + nullable_text(self.class_type) + \
-               ', enum: ' + nullable_text(self.enum) + \
+               ', type: ' + str(self.class_type) + \
                ', exportable: ' + str(self.exportable) + \
                ', useHive: ' + str(self.use_hive) + \
                ', tsValidation: ' + str(self.ts_validation) + ')'

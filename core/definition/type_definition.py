@@ -1,6 +1,8 @@
 import sys
 import os
 
+from enum_definition import EnumDefinition
+
 core_folder_path = os.path.abspath((os.path.dirname(sys.argv[0])))
 sys.path.append(core_folder_path + '/utils/')
 
@@ -72,11 +74,12 @@ class TypeDefinition:
 class TypeFieldDefinition:
     def __init__(self, name, yaml_content):
         self.name = name
-        self.type_definition, self.comment, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
+        self.type_definition, self.enum, self.comment, self.nullable, self.optional = self._get_type_field_definition(yaml_content)
     def _get_type_field_definition(self, yaml_content):
         nullable = False
         optional = False
         type_definition = None
+        enum = None
         comment = None
 
         for item in yaml_content:
@@ -84,6 +87,8 @@ class TypeFieldDefinition:
                 content = item[key]
                 if(key == reserved_type):
                     type_definition = TypeDefinition(content)
+                elif(key == reserved_enum):
+                    enum = EnumDefinition(content)
                 elif(key == reserved_nullable):
                     nullable = get_boolean_of_yaml(content)
                 elif(key == reserved_optional):
@@ -91,7 +96,7 @@ class TypeFieldDefinition:
                 elif(key == reserved_comment):
                     comment = content
         
-        return type_definition, comment, nullable, optional
+        return type_definition, enum, comment, nullable, optional
 
     def __str__(self):
         return 'TypeFieldDefinition(name:' + self.name + \
@@ -105,6 +110,7 @@ reserved_boolean = 'boolean'
 reserved_date = 'date'
 reserved_string = 'string'
 
+reserved_enum = 'enum'
 reserved_type = 'type'
 reserved_comment = 'comment'
 reserved_nullable = 'nullable'
