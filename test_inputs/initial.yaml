@@ -89,3 +89,17 @@
         - three:
             comment: Testing
     exportable: True
+
+- EnumWithDefinedNumbersOnOptions:
+    comment: Enum with defined numbers on options for testing
+    enum:
+      values:
+        - one:
+            value: 1
+            comment: One
+        - two:
+            value: 2
+        - three:
+            comment: Testing
+            value: 3
+    exportable: True
