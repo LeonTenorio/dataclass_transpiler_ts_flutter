@@ -6,4 +6,7 @@ export {
   TypeWithIntersection,
   TypeWithMultipleIntersection,
   NestedType,
+  SimpleEnum,
+  EnumWithDefinedNumbersOnOptions,
+  TypeWithInternalEnum,
 } from './initial.ts';

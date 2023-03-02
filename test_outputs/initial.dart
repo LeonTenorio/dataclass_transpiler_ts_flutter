@@ -258,3 +258,55 @@ class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
   ) => 
     _$cAdditionalTypeNestedTypeFromJson(json);
 }
+/// Simple enum for testing 
+enum SimpleEnum{
+  one,
+
+  two,
+
+  /// Testing 
+  three,
+
+}
+/// Enum with defined numbers on options for testing 
+enum EnumWithDefinedNumbersOnOptions{
+  /// One 
+  @JsonValue(1)
+  one,
+
+  @JsonValue(2)
+  two,
+
+  /// Testing 
+  @JsonValue(3)
+  three,
+
+}
+/// Type with internal enum 
+@freezed
+class TypeWithInternalEnum with _$TypeWithInternalEnum {
+  @HiveTypeId(typeId: HiveTypeIds.TypeWithInternalEnum)
+  const factory TypeWithInternalEnum({
+    required String a,
+    required String b,
+    required cEnum c,
+  }) = _TypeWithInternalEnum;
+
+  factory TypeWithInternalEnum.fromJson(
+    Map<String, dynamic> json,
+  ) => 
+    _$TypeWithInternalEnumFromJson(json);
+}
+@HiveType(typeId: HiveTypeIds.cEnum)
+enum cEnum{
+  /// One 
+  @JsonValue(1)
+  @HiveField(1)
+  one,
+
+  /// Two 
+  @JsonValue(2)
+  @HiveField(2)
+  two,
+
+}
