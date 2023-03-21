@@ -216,7 +216,7 @@ def _get_text_of_enum_definition(enum_definition, use_hive, dart_hive_type_ids):
             option_text = option_text + '@HiveField(' + str(hive_number_field) + ')\n  '
         option_text = option_text + option_name + ',\n'
 
-        enum_text = enum_text + option_text + '\n'
+        enum_text = enum_text + option_text
     
     enum_text = enum_text + '}\n'
 
