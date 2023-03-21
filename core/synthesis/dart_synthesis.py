@@ -188,7 +188,11 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 text_to_find
             )   
 
-    return element_text + additional_text
+    result_text = '\n' + element_text
+    if(len(additional_text)>0):
+        result_text = result_text + '\n' + additional_text
+
+    return result_text
 
 def _get_text_of_enum_definition(enum_definition, use_hive, dart_hive_type_ids):
     enum_text = _create_comment(enum_definition.comment)
