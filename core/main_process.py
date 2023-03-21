@@ -41,7 +41,7 @@ for yaml_file in  yaml_files:
             generated_exported_items, 
             lambda x: '  ' + x + ',',
             lambda array: '\n'.join(array)
-        ) + "\n} from './" + generated_file_name + ".ts';\n"
+        ) + "\n} from './" + generated_file_name + "';\n"
 
 with open(output_folder_path + "/index.dart", "w") as f:
     f.write(dart_index_file_text)
