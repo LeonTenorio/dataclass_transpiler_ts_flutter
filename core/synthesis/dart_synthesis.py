@@ -45,8 +45,28 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             main_class_name = element_name
 
             element_text = element_text + '@freezed\n' + \
-                        'class ' + element_name + ' with _$' + element_name + ' {\n' + \
-                        '  const factory ' + element_name + '({\n'
+                        'class ' + element_name + ' with _$' + element_name + ' {\n'
+            
+            if(use_hive):
+                models_box_text = '  static ModelsBox<' + element_name + '> getBox() {\n' + \
+                                  '    final box = Hive.box<' + element_name + '>(' + 'HiveTypeIds.' + element_name + '.toString());\n' + \
+                                  '    return ModelsBox<' + element_name + '>(\n' + \
+                                  '      get: (key) => key.startsWith("_")? null: box.get(key),\n' + \
+                                  '      put: (key, value) => box.put(key, value),\n' + \
+                                  '      delete: (key) async {\n' + \
+                                  '        if(key.startsWith("_")) return;\n' + \
+                                  '        await box.delete(key);\n' + \
+                                  '      },\n' + \
+                                  '      clear: () async {\n' + \
+                                  '        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));\n' + \
+                                  '      },\n' + \
+                                  '      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),\n' + \
+                                  '      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),\n' + \
+                                  '    );\n' + \
+                                  '  }\n\n'
+                element_text = element_text + models_box_text
+
+            element_text = element_text + '  const factory ' + element_name + '({\n'
 
             for field in class_type_definition_object_fields:
                 field_text, field_additional_text = _get_text_of_type_field_definition(
@@ -130,6 +150,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             intersection_class_name = element_name
             if(union_class_name!=None):
                 element_text = replace_all(element_text, union_class_name, union_class_name + 'MainIntersectionType')
+
             elif(main_class_name!=None):
                 element_text = replace_all(element_text, main_class_name, main_class_name + 'MainIntersectionType')
 
