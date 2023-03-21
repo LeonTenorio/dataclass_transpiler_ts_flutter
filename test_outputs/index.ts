@@ -9,4 +9,4 @@ export {
   SimpleEnum,
   EnumWithDefinedNumbersOnOptions,
   TypeWithInternalEnum,
-} from './initial.ts';
+} from './initial';

@@ -7,6 +7,7 @@ import './index.dart';
 part 'initial.freezed.dart';
 part 'initial.g.dart';
 
+
 /// Basic type 
 @freezed
 class BasicType with _$BasicType {
@@ -23,6 +24,7 @@ class BasicType with _$BasicType {
   ) => 
     _$BasicTypeFromJson(json);
 }
+
 @freezed
 class BasicTypeWithNullableAndOptional with _$BasicTypeWithNullableAndOptional {
   const factory BasicTypeWithNullableAndOptional({
@@ -36,6 +38,7 @@ class BasicTypeWithNullableAndOptional with _$BasicTypeWithNullableAndOptional {
   ) => 
     _$BasicTypeWithNullableAndOptionalFromJson(json);
 }
+
 @freezed
 class TypeWithUnionMainUnionType with _$TypeWithUnionMainUnionType {
   const factory TypeWithUnionMainUnionType({
@@ -95,6 +98,7 @@ class TypeWithUnion{
   }
 
 }
+
 @freezed
 class TypeWithMultipleUnionMainUnionType with _$TypeWithMultipleUnionMainUnionType {
   const factory TypeWithMultipleUnionMainUnionType({
@@ -164,6 +168,7 @@ class TypeWithMultipleUnion{
   }
 
 }
+
 @freezed
 class TypeWithIntersectionMainIntersectionType with _$TypeWithIntersectionMainIntersectionType {
   const factory TypeWithIntersectionMainIntersectionType({
@@ -195,6 +200,7 @@ class TypeWithIntersection {
     return this._values[1] as TypeWithIntersectionMainIntersectionType;
   }
 }
+
 @freezed
 class TypeWithMultipleIntersectionMainIntersectionType with _$TypeWithMultipleIntersectionMainIntersectionType {
   const factory TypeWithMultipleIntersectionMainIntersectionType({
@@ -230,6 +236,7 @@ class TypeWithMultipleIntersection {
     return this._values[2] as TypeWithMultipleIntersectionMainIntersectionType;
   }
 }
+
 /// Nested type 
 @freezed
 class NestedType with _$NestedType {
@@ -245,6 +252,8 @@ class NestedType with _$NestedType {
   ) => 
     _$NestedTypeFromJson(json);
 }
+
+
 /// additional type of field c from class NestedType 
 @freezed
 class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
@@ -258,30 +267,27 @@ class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
   ) => 
     _$cAdditionalTypeNestedTypeFromJson(json);
 }
+
 /// Simple enum for testing 
 enum SimpleEnum{
   one,
-
   two,
-
   /// Testing 
   three,
-
 }
+
 /// Enum with defined numbers on options for testing 
 enum EnumWithDefinedNumbersOnOptions{
   /// One 
   @JsonValue(1)
   one,
-
   @JsonValue(2)
   two,
-
   /// Testing 
   @JsonValue(3)
   three,
-
 }
+
 /// Type with internal enum 
 @freezed
 class TypeWithInternalEnum with _$TypeWithInternalEnum {
@@ -297,16 +303,15 @@ class TypeWithInternalEnum with _$TypeWithInternalEnum {
   ) => 
     _$TypeWithInternalEnumFromJson(json);
 }
+
 @HiveType(typeId: HiveTypeIds.cEnum)
 enum cEnum{
   /// One 
   @JsonValue(1)
   @HiveField(1)
   one,
-
   /// Two 
   @JsonValue(2)
   @HiveField(2)
   two,
-
 }
