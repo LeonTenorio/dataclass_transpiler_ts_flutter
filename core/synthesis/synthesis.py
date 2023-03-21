@@ -23,7 +23,7 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
 
     yaml_imports = yaml_definition.imports
     if(len(yaml_imports)>0):
-        ts_text = ts_text + "import {\n  "+',\n  '.join(yaml_imports)+"\n} from 'index.dart';\n\n"
+        ts_text = ts_text + "import {\n  "+',\n  '.join(yaml_imports)+"\n} from 'index';\n\n"
         for yaml_import in yaml_imports:
             ts_imports = _add_if_not_in_list(yaml_import, ts_imports)
 
