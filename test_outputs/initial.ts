@@ -1,7 +1,7 @@
 import {
   Teste1,
   Teste2
-} from 'index.dart';
+} from 'index';
 
 /**
  * Basic type 
