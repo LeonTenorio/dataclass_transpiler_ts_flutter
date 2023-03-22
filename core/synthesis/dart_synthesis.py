@@ -5,7 +5,7 @@ core_folder_path = os.path.abspath((os.path.dirname(sys.argv[0])))
 sys.path.append(core_folder_path + '/utils/')
 sys.path.append(core_folder_path + '/definition/')
 
-from general_utils import reduce_array, replace_all
+from general_utils import reduce_array, replace_all, low_case_first_letter, map_and_join_array
 from element_definition import ElementDefinition
 from type_definition import TypeDefinition
 
@@ -91,6 +91,8 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             if(main_class_name!=None):
                 element_text = replace_all(element_text, main_class_name, main_class_name + 'MainUnionType')
 
+            subclasses_names = []
+
             deserialization_text = '  late final Object _value;\n\n' + \
                                 '  ' + union_class_name + '.fromJson(Map<String, dynamic> json){\n' + \
                                 '    final deserializationFunctions = [\n'
@@ -110,6 +112,8 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 )
                 additional_text = additional_text + union_additional_text
 
+                subclasses_names.append(union_object_name)
+
                 deserialization_text = deserialization_text + '      (json) => ' + union_object_name + '.fromJson(json),\n'
 
                 is_union_object_function_name = 'is' + union_object_name
@@ -123,7 +127,20 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                                         '  }\n\n'
                                         
                 serialization_text = serialization_text + '      Tuple2(this.' + is_union_object_function_name + ', this.' + as_union_object_function_name + '),\n'
-                        
+
+            constructor_text = '  ' + union_class_name + '.fromValue({\n' + map_and_join_array(
+                                    subclasses_names,
+                                    lambda x: '    ' + x + ' ? ' + low_case_first_letter(x) + ',\n',
+                                    lambda array: ''.join(array)
+                                ) + '  }){\n' + \
+                                '    _value = (\n' + map_and_join_array(
+                                    subclasses_names,
+                                    lambda x: '      '+ low_case_first_letter(x),
+                                    lambda array: '??\n'.join(array)
+                                ) + '\n' + \
+                                '    )!;\n' + \
+                                '  }\n'
+
             deserialization_text = deserialization_text + '    ];\n\n' + \
                                 '    for(final deserializationFunction in deserializationFunctions){\n' + \
                                 '      try{\n' + \
@@ -143,6 +160,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             element_text = element_text + 'class ' + union_class_name + '{\n' + \
                                     deserialization_text + '\n'+ \
                                     serialization_text + '\n' + \
+                                    constructor_text + '\n' + \
                                     as_final_classes_text + \
                                     '}\n'
 
