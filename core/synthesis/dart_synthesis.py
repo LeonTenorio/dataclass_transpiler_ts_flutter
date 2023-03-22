@@ -122,7 +122,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 as_final_classes_text = as_final_classes_text + '  bool ' + is_union_object_function_name + '() {\n' + \
                                         '    return _value is ' + union_object_name + ';\n' + \
                                         '  }\n\n' + \
-                                        '  ' + union_class_name + ' ' + as_union_object_function_name + '(){\n' + \
+                                        '  ' + union_object_name + ' ' + as_union_object_function_name + '(){\n' + \
                                         '    return _value as ' + union_object_name + ';\n' + \
                                         '  }\n\n'
                                         
