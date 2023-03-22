@@ -108,6 +108,7 @@ class TypeWithUnion{
     )!;
   }
 
+
   bool isBasicType() {
     return _value is BasicType;
   }
@@ -197,6 +198,63 @@ class TypeWithMultipleUnion{
       basicTypeWithNullableAndOptional??
       typeWithMultipleUnionMainUnionType
     )!;
+  }
+
+  static ModelsBox<TypeWithMultipleUnion> getBox() {
+    final basicTypeKeyPrefix =  "_union-TypeWithMultipleUnion-BasicType";
+    final basicTypeWithNullableAndOptionalKeyPrefix =  "_union-TypeWithMultipleUnion-BasicTypeWithNullableAndOptional";
+    final typeWithMultipleUnionMainUnionTypeKeyPrefix =  "_union-TypeWithMultipleUnion-TypeWithMultipleUnionMainUnionType";
+    final basicTypeBox = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
+    final basicTypeWithNullableAndOptionalBox = Hive.box<BasicTypeWithNullableAndOptional>(HiveTypeIds.BasicTypeWithNullableAndOptional.toString());
+    final typeWithMultipleUnionMainUnionTypeBox = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
+    return ModelsBox<TypeWithMultipleUnion>(
+      get: (key) { 
+        return (
+          basicTypeBox.get(basicTypeKeyPrefix + key) ??
+          basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key) ??
+          typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key)
+        );
+      },
+      put: (key, value) async {
+        if (value is BasicType) {
+          await basicTypeBox.put(basicTypeKeyPrefix + key, value);
+        }
+        if (value is BasicTypeWithNullableAndOptional) {
+          await basicTypeWithNullableAndOptionalBox.put(basicTypeWithNullableAndOptionalKeyPrefix + key, value);
+        }
+        if (value is TypeWithMultipleUnionMainUnionType) {
+          await typeWithMultipleUnionMainUnionTypeBox.put(typeWithMultipleUnionMainUnionTypeKeyPrefix + key, value);
+        }
+      },
+      delete: (key) async {
+        await Future.wait([
+          basicTypeBox.delete(basicTypeKeyPrefixkey),
+          basicTypeWithNullableAndOptionalBox.delete(basicTypeWithNullableAndOptionalKeyPrefixkey),
+          typeWithMultipleUnionMainUnionTypeBox.delete(typeWithMultipleUnionMainUnionTypeKeyPrefixkey),
+        ]);
+      },
+      clear: () async {
+        await Future.wait([
+          basicTypeBox.deleteAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix))),
+          basicTypeWithNullableAndOptionalBox.deleteAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix))),
+          typeWithMultipleUnionMainUnionTypeBox.deleteAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix))),
+        ]);
+      },
+      values: () {
+        List<TypeWithMultipleUnion> listOfValues = [];
+        listOfValues.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({basicType: basicTypeBox.get(key)!})).map((key) => basicTypeBox.get(key)!);
+        listOfValues.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBox.get(key)!})).map((key) => basicTypeWithNullableAndOptionalBox.get(key)!);
+        listOfValues.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBox.get(key)!})).map((key) => typeWithMultipleUnionMainUnionTypeBox.get(key)!);
+        return Iterable.castFrom<TypeWithMultipleUnion, TypeWithMultipleUnion>(listOfValues);
+      },
+      keys: () {
+        List<String> keys = [];
+        keys.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)));
+        keys.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)));
+        keys.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)));
+        return Iterable.castFrom<String, String>(keys);
+      },
+    );
   }
 
   bool isBasicType() {
