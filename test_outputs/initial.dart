@@ -11,6 +11,23 @@ part 'initial.g.dart';
 /// Basic type 
 @freezed
 class BasicType with _$BasicType {
+  static ModelsBox<BasicType> getBox() {
+    final box = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
+    return ModelsBox<BasicType>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.BasicType)
   const factory BasicType({
     /// Basic type a object field comment 
@@ -81,6 +98,16 @@ class TypeWithUnion{
     }
   }
 
+  TypeWithUnion.fromValue({
+    BasicType? basicType,
+    TypeWithUnionMainUnionType? typeWithUnionMainUnionType,
+  }){
+    _value = (
+      basicType??
+      typeWithUnionMainUnionType
+    )!;
+  }
+
   bool isBasicType() {
     return _value is BasicType;
   }
@@ -101,6 +128,23 @@ class TypeWithUnion{
 
 @freezed
 class TypeWithMultipleUnionMainUnionType with _$TypeWithMultipleUnionMainUnionType {
+  static ModelsBox<TypeWithMultipleUnionMainUnionType> getBox() {
+    final box = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
+    return ModelsBox<TypeWithMultipleUnionMainUnionType>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   const factory TypeWithMultipleUnionMainUnionType({
     required String c,
     required String d,
@@ -141,6 +185,18 @@ class TypeWithMultipleUnion{
         return evaluateClass.value2().toJson();
       }
     }
+  }
+
+  TypeWithMultipleUnion.fromValue({
+    BasicType? basicType,
+    BasicTypeWithNullableAndOptional? basicTypeWithNullableAndOptional,
+    TypeWithMultipleUnionMainUnionType? typeWithMultipleUnionMainUnionType,
+  }){
+    _value = (
+      basicType??
+      basicTypeWithNullableAndOptional??
+      typeWithMultipleUnionMainUnionType
+    )!;
   }
 
   bool isBasicType() {
@@ -193,6 +249,16 @@ class TypeWithIntersection {
     return this._values.map((e) => (e as dynamic).toJson()).reduce((a, b) => a..addAll(b));
   }
 
+  TypeWithIntersection.fromValues({
+    required BasicType basicType,
+    required TypeWithIntersectionMainIntersectionType typeWithIntersectionMainIntersectionType,
+  }){
+    _values = [
+      basicType,
+      typeWithIntersectionMainIntersectionType
+    ];
+  }
+
   BasicType asBasicType(){
     return this._values[0] as BasicType;
   }
@@ -226,6 +292,18 @@ class TypeWithMultipleIntersection {
     return this._values.map((e) => (e as dynamic).toJson()).reduce((a, b) => a..addAll(b));
   }
 
+  TypeWithMultipleIntersection.fromValues({
+    required BasicType basicType,
+    required BasicTypeWithNullableAndOptional basicTypeWithNullableAndOptional,
+    required TypeWithMultipleIntersectionMainIntersectionType typeWithMultipleIntersectionMainIntersectionType,
+  }){
+    _values = [
+      basicType,
+      basicTypeWithNullableAndOptional,
+      typeWithMultipleIntersectionMainIntersectionType
+    ];
+  }
+
   BasicType asBasicType(){
     return this._values[0] as BasicType;
   }
@@ -240,6 +318,23 @@ class TypeWithMultipleIntersection {
 /// Nested type 
 @freezed
 class NestedType with _$NestedType {
+  static ModelsBox<NestedType> getBox() {
+    final box = Hive.box<NestedType>(HiveTypeIds.NestedType.toString());
+    return ModelsBox<NestedType>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.NestedType)
   const factory NestedType({
     required String a,
@@ -257,6 +352,23 @@ class NestedType with _$NestedType {
 /// additional type of field c from class NestedType 
 @freezed
 class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
+  static ModelsBox<cAdditionalTypeNestedType> getBox() {
+    final box = Hive.box<cAdditionalTypeNestedType>(HiveTypeIds.cAdditionalTypeNestedType.toString());
+    return ModelsBox<cAdditionalTypeNestedType>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.cAdditionalTypeNestedType)
   const factory cAdditionalTypeNestedType({
     required String a,
@@ -291,6 +403,23 @@ enum EnumWithDefinedNumbersOnOptions{
 /// Type with internal enum 
 @freezed
 class TypeWithInternalEnum with _$TypeWithInternalEnum {
+  static ModelsBox<TypeWithInternalEnum> getBox() {
+    final box = Hive.box<TypeWithInternalEnum>(HiveTypeIds.TypeWithInternalEnum.toString());
+    return ModelsBox<TypeWithInternalEnum>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.TypeWithInternalEnum)
   const factory TypeWithInternalEnum({
     required String a,
