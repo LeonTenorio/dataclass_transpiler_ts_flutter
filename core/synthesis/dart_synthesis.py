@@ -186,6 +186,8 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             elif(main_class_name!=None):
                 intersections_to_create_object.append(main_class_name + 'MainIntersectionType')
             
+            subclasses_names = []
+
             for index, intersection in enumerate(intersections_to_create_object):
                 intersection_object_name, intersection_additional_text = _get_text_of_type_definition(
                     intersection, 
@@ -195,16 +197,32 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 )
                 additional_text = additional_text + intersection_additional_text
 
+                subclasses_names.append(intersection_object_name)
+
                 deserialization_text = deserialization_text + '    this._values.add(' + intersection_object_name + '.fromJson(json));\n'
                 as_final_classes_text = as_final_classes_text + '  ' + intersection_object_name + ' as' + intersection_object_name + '(){\n'+ \
                                         '    return this._values[' + str(index) + '] as ' +intersection_object_name + ';\n'\
                                         '  }\n'
             deserialization_text = deserialization_text + '  }\n'
 
+            constructor_text = '  ' + intersection_class_name + '.fromValues({\n' + map_and_join_array(
+                                    subclasses_names,
+                                    lambda x: '    required ' + x + ' ' + low_case_first_letter(x) + ',\n',
+                                    lambda array: ''.join(array)
+                                ) + '  }){\n' + \
+                                '    _values = [\n' + map_and_join_array(
+                                    subclasses_names,
+                                    lambda x: '      '+ low_case_first_letter(x),
+                                    lambda array: ',\n'.join(array)
+                                ) + '\n' + \
+                                '    ];\n' + \
+                                '  }\n'
+
             element_text = element_text + 'class ' + intersection_class_name + ' {\n' + \
                         '  late final List<Object> _values;\n\n' + \
                         deserialization_text + '\n' + \
                         serialization_text + '\n' + \
+                        constructor_text + '\n' + \
                         as_final_classes_text + \
                         '}\n'
 
