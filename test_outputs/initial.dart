@@ -113,7 +113,7 @@ class TypeWithUnion{
     return _value is BasicType;
   }
 
-  TypeWithUnion asBasicType(){
+  BasicType asBasicType(){
     return _value as BasicType;
   }
 
@@ -121,7 +121,7 @@ class TypeWithUnion{
     return _value is TypeWithUnionMainUnionType;
   }
 
-  TypeWithUnion asTypeWithUnionMainUnionType(){
+  TypeWithUnionMainUnionType asTypeWithUnionMainUnionType(){
     return _value as TypeWithUnionMainUnionType;
   }
 
@@ -261,7 +261,7 @@ class TypeWithMultipleUnion{
     return _value is BasicType;
   }
 
-  TypeWithMultipleUnion asBasicType(){
+  BasicType asBasicType(){
     return _value as BasicType;
   }
 
@@ -269,7 +269,7 @@ class TypeWithMultipleUnion{
     return _value is BasicTypeWithNullableAndOptional;
   }
 
-  TypeWithMultipleUnion asBasicTypeWithNullableAndOptional(){
+  BasicTypeWithNullableAndOptional asBasicTypeWithNullableAndOptional(){
     return _value as BasicTypeWithNullableAndOptional;
   }
 
@@ -277,7 +277,7 @@ class TypeWithMultipleUnion{
     return _value is TypeWithMultipleUnionMainUnionType;
   }
 
-  TypeWithMultipleUnion asTypeWithMultipleUnionMainUnionType(){
+  TypeWithMultipleUnionMainUnionType asTypeWithMultipleUnionMainUnionType(){
     return _value as TypeWithMultipleUnionMainUnionType;
   }
 
