@@ -130,7 +130,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
 
             constructor_text = '  ' + union_class_name + '.fromValue({\n' + map_and_join_array(
                                     subclasses_names,
-                                    lambda x: '    ' + x + ' ? ' + low_case_first_letter(x) + ',\n',
+                                    lambda x: '    ' + x + '? ' + low_case_first_letter(x) + ',\n',
                                     lambda array: ''.join(array)
                                 ) + '  }){\n' + \
                                 '    _value = (\n' + map_and_join_array(
