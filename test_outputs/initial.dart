@@ -209,10 +209,10 @@ class TypeWithMultipleUnion{
     final typeWithMultipleUnionMainUnionTypeBox = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
     return ModelsBox<TypeWithMultipleUnion>(
       get: (key) { 
-        return (
-          basicTypeBox.get(basicTypeKeyPrefix + key) ??
-          basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key) ??
-          typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key)
+        return TypeWithMultipleUnion.fromValue(
+          basicType: basicTypeBox.get(basicTypeKeyPrefix + key),
+          basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key),
+          typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key),
         );
       },
       put: (key, value) async {
