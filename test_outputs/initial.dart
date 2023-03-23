@@ -242,9 +242,9 @@ class TypeWithMultipleUnion{
       },
       values: () {
         List<TypeWithMultipleUnion> listOfValues = [];
-        listOfValues.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({basicType: basicTypeBox.get(key)!})).map((key) => basicTypeBox.get(key)!);
-        listOfValues.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBox.get(key)!})).map((key) => basicTypeWithNullableAndOptionalBox.get(key)!);
-        listOfValues.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue({typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBox.get(key)!})).map((key) => typeWithMultipleUnionMainUnionTypeBox.get(key)!);
+        listOfValues.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(basicType:basicTypeBox.get(key)!)));
+        listOfValues.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(basicTypeWithNullableAndOptional:basicTypeWithNullableAndOptionalBox.get(key)!)));
+        listOfValues.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(typeWithMultipleUnionMainUnionType:typeWithMultipleUnionMainUnionTypeBox.get(key)!)));
         return Iterable.castFrom<TypeWithMultipleUnion, TypeWithMultipleUnion>(listOfValues);
       },
       keys: () {
