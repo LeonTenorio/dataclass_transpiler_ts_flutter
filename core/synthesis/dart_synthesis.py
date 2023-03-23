@@ -47,24 +47,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
             element_text = element_text + '@freezed\n' + \
                         'class ' + element_name + ' with _$' + element_name + ' {\n'
             
-            if(use_hive):
-                models_box_text = '  static ModelsBox<' + element_name + '> getBox() {\n' + \
-                                  '    final box = Hive.box<' + element_name + '>(' + 'HiveTypeIds.' + element_name + '.toString());\n' + \
-                                  '    return ModelsBox<' + element_name + '>(\n' + \
-                                  '      get: (key) => key.startsWith("_")? null: box.get(key),\n' + \
-                                  '      put: (key, value) => box.put(key, value),\n' + \
-                                  '      delete: (key) async {\n' + \
-                                  '        if(key.startsWith("_")) return;\n' + \
-                                  '        await box.delete(key);\n' + \
-                                  '      },\n' + \
-                                  '      clear: () async {\n' + \
-                                  '        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));\n' + \
-                                  '      },\n' + \
-                                  '      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),\n' + \
-                                  '      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),\n' + \
-                                  '    );\n' + \
-                                  '  }\n\n'
-                element_text = element_text + models_box_text
+            element_text = element_text + _get_models_boxes_text(use_hive, element_name, None)
 
             element_text = element_text + '  const factory ' + element_name + '({\n'
 
@@ -140,128 +123,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                                 ) + '\n' + \
                                 '    )!;\n' + \
                                 '  }\n'
-            models_box_text = ''
-
-            if(use_hive):
-                models_box_boxes_prefix_text = []
-                models_box_boxes_variables_text = []
-                models_box_boxes_getters_text = []
-                models_box_boxes_put_text = []
-                models_box_boxes_delete_text = []
-                models_box_boxes_clear_text = []
-                models_box_boxes_values_text = []
-                models_box_boxes_keys_text = []
-
-                for subclass_name in subclasses_names:
-                    models_box_variable_prefix = low_case_first_letter(subclass_name) + 'KeyPrefix'
-                    models_box_variable_name = low_case_first_letter(subclass_name) + 'Box'
-                    models_box_boxes_prefix_text.append(
-                        'final ' + models_box_variable_prefix + ' = ' + \
-                        ' "_union-'+union_class_name+'-'+subclass_name+'"'
-                    )
-                    models_box_boxes_variables_text.append(
-                        'final ' + models_box_variable_name + ' = ' + \
-                        'Hive.box<' + subclass_name + '>(HiveTypeIds.' + \
-                        subclass_name + '.toString()'
-                        ')'
-                    )
-                    models_box_boxes_getters_text.append(models_box_variable_name + '.get(' + models_box_variable_prefix + ' + key)')
-                    models_box_boxes_put_text.append('if (value is ' + subclass_name+ ') {')
-                    models_box_boxes_put_text.append('  await ' + models_box_variable_name + '.put(' + models_box_variable_prefix + ' + key, value);')
-                    models_box_boxes_put_text.append('}')
-                    models_box_boxes_delete_text.append(models_box_variable_name + '.delete(' + models_box_variable_prefix + 'key)')
-                    models_box_boxes_clear_text.append(
-                        models_box_variable_name + '.deleteAll(' + \
-                        models_box_variable_name + '.keys.map((key) => key as String).where((key) => ' + \
-                        'key.startsWith(' + models_box_variable_prefix + ')' + \
-                        ')' + \
-                        ')'
-                    )
-                    models_box_boxes_values_text.append(
-                        'listOfValues.addAll(' + \
-                        models_box_variable_name + '.keys.map((key) => key as String)' + \
-                        '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
-                        '.map((key) => '+ \
-                        union_class_name + '.fromValue({' + \
-                        low_case_first_letter(subclass_name) + ': ' + \
-                        models_box_variable_name + '.get(key)!'
-                        '})' + \
-                        ')'
-                        '.map((key) => '+models_box_variable_name+'.get(key)!)'
-                    )
-                    models_box_boxes_keys_text.append(
-                        'keys.addAll(' + \
-                        models_box_variable_name + '.keys.map((key) => key as String)' + \
-                        '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
-                        ')'
-                    )
-
-                models_box_text = '  static ModelsBox<' + union_class_name + '> getBox() {\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_prefix_text,
-                                    lambda x: '    ' + x + ';',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_variables_text,
-                                    lambda x: '    ' + x + ';',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' + \
-                                  '    return ModelsBox<' + union_class_name + '>(\n' \
-                                  '      get: (key) { \n' + \
-                                  '        return (\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_getters_text,
-                                    lambda x: '          ' + x,
-                                    lambda array: ' ??\n'.join(array)
-                                  ) + '\n'+\
-                                  '        );\n'+ \
-                                  '      },\n' + \
-                                  '      put: (key, value) async {\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_put_text,
-                                    lambda x: '        ' + x,
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' + \
-                                  '      },\n' + \
-                                  '      delete: (key) async {\n' + \
-                                  '        await Future.wait([\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_delete_text,
-                                    lambda x: '          ' + x + ',',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' +\
-                                  '        ]);\n' + \
-                                  '      },\n' + \
-                                  '      clear: () async {\n' + \
-                                  '        await Future.wait([\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_clear_text,
-                                    lambda x: '          ' + x + ',',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' +\
-                                  '        ]);\n' + \
-                                  '      },\n' + \
-                                  '      values: () {\n' + \
-                                  '        List<' + union_class_name + '> listOfValues = [];\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_values_text,
-                                    lambda x: '        ' + x + ';',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' + \
-                                  '        return Iterable.castFrom<' +union_class_name+ ', ' + union_class_name + '>(listOfValues);\n' + \
-                                  '      },\n' + \
-                                  '      keys: () {\n' + \
-                                  '        List<String> keys = [];\n' + \
-                                  map_and_join_array(
-                                    models_box_boxes_keys_text,
-                                    lambda x: '        ' + x + ';',
-                                    lambda array: '\n'.join(array)
-                                  ) + '\n' + \
-                                  '        return Iterable.castFrom<String, String>(keys);\n' + \
-                                  '      },\n' + \
-                                  '    );\n' + \
-                                  '  }\n'
+            models_box_text = _get_models_boxes_text(use_hive, union_class_name, subclasses_names, is_union=True)
 
             deserialization_text = deserialization_text + '    ];\n\n' + \
                                 '    for(final deserializationFunction in deserializationFunctions){\n' + \
@@ -555,6 +417,150 @@ def _union_of_primitive_type(a, b):
     ):
         return reserved_string
     return None
+    
+def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = False, is_intersection = False):
+    if(use_hive==False):
+        return ''
+    if(subclasses_names==None):
+        return '  static ModelsBox<' + class_name + '> getBox() {\n' + \
+               '    final box = Hive.box<' + class_name + '>(' + 'HiveTypeIds.' + class_name + '.toString());\n' + \
+               '    return ModelsBox<' + class_name + '>(\n' + \
+               '      get: (key) => key.startsWith("_")? null: box.get(key),\n' + \
+               '      put: (key, value) => box.put(key, value),\n' + \
+               '      delete: (key) async {\n' + \
+               '        if(key.startsWith("_")) return;\n' + \
+               '        await box.delete(key);\n' + \
+               '      },\n' + \
+               '      clear: () async {\n' + \
+               '        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));\n' + \
+               '      },\n' + \
+               '      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),\n' + \
+               '      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),\n' + \
+               '    );\n' + \
+               '  }\n\n'
+    if(is_union):
+        union_class_name = class_name
+
+        models_box_boxes_prefix_text = []
+        models_box_boxes_variables_text = []
+        models_box_boxes_getters_text = []
+        models_box_boxes_put_text = []
+        models_box_boxes_delete_text = []
+        models_box_boxes_clear_text = []
+        models_box_boxes_values_text = []
+        models_box_boxes_keys_text = []
+
+        for subclass_name in subclasses_names:
+            models_box_variable_prefix = low_case_first_letter(subclass_name) + 'KeyPrefix'
+            models_box_variable_name = low_case_first_letter(subclass_name) + 'Box'
+            models_box_boxes_prefix_text.append(
+                'final ' + models_box_variable_prefix + ' = ' + \
+                ' "_union-'+union_class_name+'-'+subclass_name+'"'
+            )
+            models_box_boxes_variables_text.append(
+                'final ' + models_box_variable_name + ' = ' + \
+                'Hive.box<' + subclass_name + '>(HiveTypeIds.' + \
+                subclass_name + '.toString()'
+                ')'
+            )
+            models_box_boxes_getters_text.append(models_box_variable_name + '.get(' + models_box_variable_prefix + ' + key)')
+            models_box_boxes_put_text.append('if (value is ' + subclass_name+ ') {')
+            models_box_boxes_put_text.append('  await ' + models_box_variable_name + '.put(' + models_box_variable_prefix + ' + key, value);')
+            models_box_boxes_put_text.append('}')
+            models_box_boxes_delete_text.append(models_box_variable_name + '.delete(' + models_box_variable_prefix + 'key)')
+            models_box_boxes_clear_text.append(
+                models_box_variable_name + '.deleteAll(' + \
+                models_box_variable_name + '.keys.map((key) => key as String).where((key) => ' + \
+                'key.startsWith(' + models_box_variable_prefix + ')' + \
+                ')' + \
+                ')'
+            )
+            models_box_boxes_values_text.append(
+                'listOfValues.addAll(' + \
+                models_box_variable_name + '.keys.map((key) => key as String)' + \
+                '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
+                '.map((key) => '+ \
+                union_class_name + '.fromValue({' + \
+                low_case_first_letter(subclass_name) + ': ' + \
+                models_box_variable_name + '.get(key)!'
+                '})' + \
+                ')'
+                '.map((key) => '+models_box_variable_name+'.get(key)!)'
+            )
+            models_box_boxes_keys_text.append(
+                'keys.addAll(' + \
+                models_box_variable_name + '.keys.map((key) => key as String)' + \
+                '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
+                ')'
+            )
+
+        models_box_text = '  static ModelsBox<' + union_class_name + '> getBox() {\n' + \
+                            map_and_join_array(
+                                models_box_boxes_prefix_text,
+                                lambda x: '    ' + x + ';',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            map_and_join_array(
+                                models_box_boxes_variables_text,
+                                lambda x: '    ' + x + ';',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            '    return ModelsBox<' + union_class_name + '>(\n' \
+                            '      get: (key) { \n' + \
+                            '        return (\n' + \
+                            map_and_join_array(
+                                models_box_boxes_getters_text,
+                                lambda x: '          ' + x,
+                                lambda array: ' ??\n'.join(array)
+                            ) + '\n'+\
+                            '        );\n'+ \
+                            '      },\n' + \
+                            '      put: (key, value) async {\n' + \
+                            map_and_join_array(
+                                models_box_boxes_put_text,
+                                lambda x: '        ' + x,
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            '      },\n' + \
+                            '      delete: (key) async {\n' + \
+                            '        await Future.wait([\n' + \
+                            map_and_join_array(
+                                models_box_boxes_delete_text,
+                                lambda x: '          ' + x + ',',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' +\
+                            '        ]);\n' + \
+                            '      },\n' + \
+                            '      clear: () async {\n' + \
+                            '        await Future.wait([\n' + \
+                            map_and_join_array(
+                                models_box_boxes_clear_text,
+                                lambda x: '          ' + x + ',',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' +\
+                            '        ]);\n' + \
+                            '      },\n' + \
+                            '      values: () {\n' + \
+                            '        List<' + union_class_name + '> listOfValues = [];\n' + \
+                            map_and_join_array(
+                                models_box_boxes_values_text,
+                                lambda x: '        ' + x + ';',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            '        return Iterable.castFrom<' +union_class_name+ ', ' + union_class_name + '>(listOfValues);\n' + \
+                            '      },\n' + \
+                            '      keys: () {\n' + \
+                            '        List<String> keys = [];\n' + \
+                            map_and_join_array(
+                                models_box_boxes_keys_text,
+                                lambda x: '        ' + x + ';',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            '        return Iterable.castFrom<String, String>(keys);\n' + \
+                            '      },\n' + \
+                            '    );\n' + \
+                            '  }\n'
+        return models_box_text
     
 
 reserved_integer = 'integer'
