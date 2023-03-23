@@ -484,12 +484,11 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                 models_box_variable_name + '.keys.map((key) => key as String)' + \
                 '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
                 '.map((key) => '+ \
-                union_class_name + '.fromValue({' + \
-                low_case_first_letter(subclass_name) + ': ' + \
-                models_box_variable_name + '.get(key)!'
-                '})' + \
+                union_class_name + '.fromValue(' + \
+                models_box_instance_parameter + ':' + models_box_variable_name + '.get(key)!' + \
+                ')' + \
+                ')' + \
                 ')'
-                '.map((key) => '+models_box_variable_name+'.get(key)!)'
             )
             models_box_boxes_keys_text.append(
                 'keys.addAll(' + \
