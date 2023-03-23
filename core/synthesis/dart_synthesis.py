@@ -451,6 +451,7 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
         models_box_boxes_keys_text = []
 
         for subclass_name in subclasses_names:
+            models_box_instance_parameter = low_case_first_letter(subclass_name)
             models_box_variable_prefix = low_case_first_letter(subclass_name) + 'KeyPrefix'
             models_box_variable_name = low_case_first_letter(subclass_name) + 'Box'
             models_box_boxes_prefix_text.append(
@@ -463,7 +464,10 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                 subclass_name + '.toString()'
                 ')'
             )
-            models_box_boxes_getters_text.append(models_box_variable_name + '.get(' + models_box_variable_prefix + ' + key)')
+            models_box_boxes_getters_text.append(
+                models_box_instance_parameter + ': ' + \
+                models_box_variable_name + '.get(' + models_box_variable_prefix + ' + key)'
+            )
             models_box_boxes_put_text.append('if (value is ' + subclass_name+ ') {')
             models_box_boxes_put_text.append('  await ' + models_box_variable_name + '.put(' + models_box_variable_prefix + ' + key, value);')
             models_box_boxes_put_text.append('}')
@@ -507,13 +511,13 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                             ) + '\n' + \
                             '    return ModelsBox<' + union_class_name + '>(\n' \
                             '      get: (key) { \n' + \
-                            '        return (\n' + \
+                            '        return ' + union_class_name + '.fromValue(\n' + \
                             map_and_join_array(
                                 models_box_boxes_getters_text,
-                                lambda x: '          ' + x,
-                                lambda array: ' ??\n'.join(array)
-                            ) + '\n'+\
-                            '        );\n'+ \
+                                lambda x: '          ' + x + ',',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' \
+                            '        );\n' + \
                             '      },\n' + \
                             '      put: (key, value) async {\n' + \
                             map_and_join_array(
