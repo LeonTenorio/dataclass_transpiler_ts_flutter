@@ -74,7 +74,8 @@ def _get_hive_type_ids_output_text(map_of_dart_hive_type_id_for_elements):
     return output_text
     
 def __fill_list_dart_hive_type_id_for_element_index(list):
-    list.sort(key=lambda x: __sort_dart_hive_type_id_for_element_key(x, len(list)))
+    list_length = len(list)
+    list.sort(key=lambda x: __sort_dart_hive_type_id_for_element_key(x, list_length))
     
     next_index = 1
     for index, element in enumerate(list):
