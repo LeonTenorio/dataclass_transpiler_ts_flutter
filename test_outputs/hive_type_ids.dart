@@ -6,4 +6,5 @@ class HiveTypeIds {
   static const int NestedType = 4;
   static const int cEnum = 5;
   static const int TypeWithInternalEnum = 6;
+  static const int TypeWithIntersectionMainIntersectionType = 7;
 }
