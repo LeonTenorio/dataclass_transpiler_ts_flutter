@@ -190,6 +190,8 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                                         '  }\n'
             deserialization_text = deserialization_text + '  }\n'
 
+            models_box_text = _get_models_boxes_text(use_hive, intersection_class_name, subclasses_names, is_intersection=True)
+
             constructor_text = '  ' + intersection_class_name + '.fromValues({\n' + map_and_join_array(
                                     subclasses_names,
                                     lambda x: '    required ' + x + ' ' + low_case_first_letter(x) + ',\n',
@@ -208,6 +210,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                         deserialization_text + '\n' + \
                         serialization_text + '\n' + \
                         constructor_text + '\n' + \
+                        models_box_text + '\n' + \
                         as_final_classes_text + \
                         '}\n'
 
@@ -438,25 +441,35 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                '      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),\n' + \
                '    );\n' + \
                '  }\n\n'
-    if(is_union):
-        union_class_name = class_name
-
+    if(is_union or is_intersection):
         models_box_boxes_prefix_text = []
         models_box_boxes_variables_text = []
-        models_box_boxes_getters_text = []
+        models_box_boxes_getters_variables_text = []
+        models_box_boxes_getters_instance_text = []
         models_box_boxes_put_text = []
         models_box_boxes_delete_text = []
         models_box_boxes_clear_text = []
-        models_box_boxes_values_text = []
         models_box_boxes_keys_text = []
 
-        for subclass_name in subclasses_names:
+        if(is_union):
+            models_box_boxes_keys_text.append('List<String> keys = [];')
+        if(is_intersection):
+            models_box_boxes_keys_text.append('List<List<String>> keys = [];')
+
+        for subclass_index, subclass_name in enumerate(subclasses_names):
             models_box_instance_parameter = low_case_first_letter(subclass_name)
             models_box_variable_prefix = low_case_first_letter(subclass_name) + 'KeyPrefix'
             models_box_variable_name = low_case_first_letter(subclass_name) + 'Box'
+
+            models_box_private_field_type_prefix = ''
+            if(is_union):
+                models_box_private_field_type_prefix = '_union'
+            else:
+                models_box_private_field_type_prefix = '_intersection'
+
             models_box_boxes_prefix_text.append(
                 'final ' + models_box_variable_prefix + ' = ' + \
-                ' "_union-'+union_class_name+'-'+subclass_name+'"'
+                ' "'+models_box_private_field_type_prefix+'-'+class_name+'-'+subclass_name+'"'
             )
             models_box_boxes_variables_text.append(
                 'final ' + models_box_variable_name + ' = ' + \
@@ -464,13 +477,27 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                 subclass_name + '.toString()'
                 ')'
             )
-            models_box_boxes_getters_text.append(
-                models_box_instance_parameter + ': ' + \
+            models_box_getter_variable_name = models_box_instance_parameter + 'BoxValue'
+            models_box_boxes_getters_variables_text.append(
+                'final ' + models_box_getter_variable_name + ' = ' + \
                 models_box_variable_name + '.get(' + models_box_variable_prefix + ' + key)'
             )
-            models_box_boxes_put_text.append('if (value is ' + subclass_name+ ') {')
-            models_box_boxes_put_text.append('  await ' + models_box_variable_name + '.put(' + models_box_variable_prefix + ' + key, value);')
-            models_box_boxes_put_text.append('}')
+            if(is_intersection):
+                models_box_boxes_getters_variables_text.append('if(' + models_box_getter_variable_name + '== null){')
+                models_box_boxes_getters_variables_text.append('  return null')
+                models_box_boxes_getters_variables_text.append('}')
+            models_box_boxes_getters_instance_text.append(
+                models_box_instance_parameter + ': ' + models_box_getter_variable_name
+            )
+            if(is_union):
+                models_box_boxes_put_text.append('if (value is ' + subclass_name+ ') {')
+                models_box_boxes_put_text.append('  await ' + models_box_variable_name + '.put(' + models_box_variable_prefix + ' + key, value);')
+                models_box_boxes_put_text.append('}')
+            if(is_intersection):
+                models_box_boxes_put_text.append('await ' + models_box_variable_name + '.put(' + \
+                                                 models_box_variable_prefix + ' + key, '+ \
+                                                 'value._values[' + str(subclass_index) + ']' + \
+                                                 ');')
             models_box_boxes_delete_text.append(models_box_variable_name + '.delete(' + models_box_variable_prefix + 'key)')
             models_box_boxes_clear_text.append(
                 models_box_variable_name + '.deleteAll(' + \
@@ -479,25 +506,33 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                 ')' + \
                 ')'
             )
-            models_box_boxes_values_text.append(
-                'listOfValues.addAll(' + \
-                models_box_variable_name + '.keys.map((key) => key as String)' + \
-                '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
-                '.map((key) => '+ \
-                union_class_name + '.fromValue(' + \
-                models_box_instance_parameter + ':' + models_box_variable_name + '.get(key)!' + \
-                ')' + \
-                ')' + \
-                ')'
-            )
-            models_box_boxes_keys_text.append(
-                'keys.addAll(' + \
-                models_box_variable_name + '.keys.map((key) => key as String)' + \
-                '.where((key) => key.startsWith('+models_box_variable_prefix+'))' + \
-                ')'
-            )
+            if(is_union):
+                models_box_boxes_keys_text.append(
+                    'keys.addAll(' + \
+                    models_box_variable_name + '.keys((key) => key as String)' + \
+                    '.where((key) => key.startsWith(' + models_box_variable_prefix + '))' + \
+                    '.map((key) => key.replace('+models_box_variable_prefix+', ""))' + \
+                    ')'
+                )
+            if(is_intersection):
+                models_box_boxes_keys_text.append(
+                    'keys.add(' + \
+                    models_box_variable_name + '.keys.map((key) => key as String)' + \
+                    '.where((key) => key.startsWith(' + models_box_variable_prefix + '))' + \
+                    '.map((key) => key.replace('+models_box_variable_prefix+', ""))' + \
+                    ')'
+                )
 
-        models_box_text = '  static ModelsBox<' + union_class_name + '> getBox() {\n' + \
+        if(is_union):
+            models_box_boxes_keys_text.append('return Iterable.castFrom<String, String>(keys);')
+        if(is_intersection):
+            models_box_boxes_keys_text.append('final map = Map<String, int>();')
+            models_box_boxes_keys_text.append('for (final keyList in keys){')
+            models_box_boxes_keys_text.append('  keyList.forEach((item) => map[item] = map.containsKey(item)? (map[item]! + 1): 1);')
+            models_box_boxes_keys_text.append('}')
+            models_box_boxes_keys_text.append('return map.keys.where((key) => map[key] == keys.length);')
+
+        models_box_text = '  static ModelsBox<' + class_name + '> getBox() {\n' + \
                             map_and_join_array(
                                 models_box_boxes_prefix_text,
                                 lambda x: '    ' + x + ';',
@@ -508,11 +543,21 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                                 lambda x: '    ' + x + ';',
                                 lambda array: '\n'.join(array)
                             ) + '\n' + \
-                            '    return ModelsBox<' + union_class_name + '>(\n' \
+                            '    return ModelsBox<' + class_name + '>(\n' \
                             '      get: (key) { \n' + \
-                            '        return ' + union_class_name + '.fromValue(\n' + \
                             map_and_join_array(
-                                models_box_boxes_getters_text,
+                                models_box_boxes_getters_variables_text,
+                                lambda x: '        ' + x + ';',
+                                lambda array: '\n'.join(array)
+                            ) + '\n' + \
+                            (
+                                '        return ' + class_name + '.fromValue(\n'
+                                if is_union
+                                else
+                                '        return ' + class_name + '.fromValues(\n'
+                            ) + \
+                            map_and_join_array(
+                                models_box_boxes_getters_instance_text,
                                 lambda x: '          ' + x + ',',
                                 lambda array: '\n'.join(array)
                             ) + '\n' \
@@ -544,22 +589,14 @@ def _get_models_boxes_text(use_hive, class_name, subclasses_names, is_union = Fa
                             '        ]);\n' + \
                             '      },\n' + \
                             '      values: () {\n' + \
-                            '        List<' + union_class_name + '> listOfValues = [];\n' + \
-                            map_and_join_array(
-                                models_box_boxes_values_text,
-                                lambda x: '        ' + x + ';',
-                                lambda array: '\n'.join(array)
-                            ) + '\n' + \
-                            '        return Iterable.castFrom<' +union_class_name+ ', ' + union_class_name + '>(listOfValues);\n' + \
+                            '        return ' + class_name + '.getBox().keys.map((key) => ' + class_name+ '.getBox().get(key)!);\n' + \
                             '      },\n' + \
                             '      keys: () {\n' + \
-                            '        List<String> keys = [];\n' + \
                             map_and_join_array(
                                 models_box_boxes_keys_text,
-                                lambda x: '        ' + x + ';',
+                                lambda x: '        ' + x,
                                 lambda array: '\n'.join(array)
                             ) + '\n' + \
-                            '        return Iterable.castFrom<String, String>(keys);\n' + \
                             '      },\n' + \
                             '    );\n' + \
                             '  }\n'
