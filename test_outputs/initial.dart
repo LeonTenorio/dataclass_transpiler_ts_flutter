@@ -209,10 +209,13 @@ class TypeWithMultipleUnion{
     final typeWithMultipleUnionMainUnionTypeBox = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
     return ModelsBox<TypeWithMultipleUnion>(
       get: (key) { 
+        final basicTypeBoxValue = basicTypeBox.get(basicTypeKeyPrefix + key);
+        final basicTypeWithNullableAndOptionalBoxValue = basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key);
+        final typeWithMultipleUnionMainUnionTypeBoxValue = typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key);
         return TypeWithMultipleUnion.fromValue(
-          basicType: basicTypeBox.get(basicTypeKeyPrefix + key),
-          basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key),
-          typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key),
+          basicType: basicTypeBoxValue,
+          basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBoxValue,
+          typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBoxValue,
         );
       },
       put: (key, value) async {
@@ -241,17 +244,13 @@ class TypeWithMultipleUnion{
         ]);
       },
       values: () {
-        List<TypeWithMultipleUnion> listOfValues = [];
-        listOfValues.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(basicType:basicTypeBox.get(key)!)));
-        listOfValues.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(basicTypeWithNullableAndOptional:basicTypeWithNullableAndOptionalBox.get(key)!)));
-        listOfValues.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => TypeWithMultipleUnion.fromValue(typeWithMultipleUnionMainUnionType:typeWithMultipleUnionMainUnionTypeBox.get(key)!)));
-        return Iterable.castFrom<TypeWithMultipleUnion, TypeWithMultipleUnion>(listOfValues);
+        return TypeWithMultipleUnion.getBox().keys.map((key) => TypeWithMultipleUnion.getBox().get(key)!);
       },
       keys: () {
         List<String> keys = [];
-        keys.addAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)));
-        keys.addAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)));
-        keys.addAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)));
+        keys.addAll(basicTypeBox.keys((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => key.replace(basicTypeKeyPrefix, "")))
+        keys.addAll(basicTypeWithNullableAndOptionalBox.keys((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => key.replace(basicTypeWithNullableAndOptionalKeyPrefix, "")))
+        keys.addAll(typeWithMultipleUnionMainUnionTypeBox.keys((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => key.replace(typeWithMultipleUnionMainUnionTypeKeyPrefix, "")))
         return Iterable.castFrom<String, String>(keys);
       },
     );
@@ -285,6 +284,23 @@ class TypeWithMultipleUnion{
 
 @freezed
 class TypeWithIntersectionMainIntersectionType with _$TypeWithIntersectionMainIntersectionType {
+  static ModelsBox<TypeWithIntersectionMainIntersectionType> getBox() {
+    final box = Hive.box<TypeWithIntersectionMainIntersectionType>(HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString());
+    return ModelsBox<TypeWithIntersectionMainIntersectionType>(
+      get: (key) => key.startsWith("_")? null: box.get(key),
+      put: (key, value) => box.put(key, value),
+      delete: (key) async {
+        if(key.startsWith("_")) return;
+        await box.delete(key);
+      },
+      clear: () async {
+        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
+      },
+      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
+      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+    );
+  }
+
   const factory TypeWithIntersectionMainIntersectionType({
     required String e,
   }) = _TypeWithIntersectionMainIntersectionType;
@@ -315,6 +331,58 @@ class TypeWithIntersection {
       basicType,
       typeWithIntersectionMainIntersectionType
     ];
+  }
+
+  static ModelsBox<TypeWithIntersection> getBox() {
+    final basicTypeKeyPrefix =  "_intersection-TypeWithIntersection-BasicType";
+    final typeWithIntersectionMainIntersectionTypeKeyPrefix =  "_intersection-TypeWithIntersection-TypeWithIntersectionMainIntersectionType";
+    final basicTypeBox = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
+    final typeWithIntersectionMainIntersectionTypeBox = Hive.box<TypeWithIntersectionMainIntersectionType>(HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString());
+    return ModelsBox<TypeWithIntersection>(
+      get: (key) { 
+        final basicTypeBoxValue = basicTypeBox.get(basicTypeKeyPrefix + key);
+        if(basicTypeBoxValue== null){;
+          return null;
+        };
+        final typeWithIntersectionMainIntersectionTypeBoxValue = typeWithIntersectionMainIntersectionTypeBox.get(typeWithIntersectionMainIntersectionTypeKeyPrefix + key);
+        if(typeWithIntersectionMainIntersectionTypeBoxValue== null){;
+          return null;
+        };
+        return TypeWithIntersection.fromValues(
+          basicType: basicTypeBoxValue,
+          typeWithIntersectionMainIntersectionType: typeWithIntersectionMainIntersectionTypeBoxValue,
+        );
+      },
+      put: (key, value) async {
+        await basicTypeBox.put(basicTypeKeyPrefix + key, value._values[0]);
+        await typeWithIntersectionMainIntersectionTypeBox.put(typeWithIntersectionMainIntersectionTypeKeyPrefix + key, value._values[1]);
+      },
+      delete: (key) async {
+        await Future.wait([
+          basicTypeBox.delete(basicTypeKeyPrefixkey),
+          typeWithIntersectionMainIntersectionTypeBox.delete(typeWithIntersectionMainIntersectionTypeKeyPrefixkey),
+        ]);
+      },
+      clear: () async {
+        await Future.wait([
+          basicTypeBox.deleteAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix))),
+          typeWithIntersectionMainIntersectionTypeBox.deleteAll(typeWithIntersectionMainIntersectionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithIntersectionMainIntersectionTypeKeyPrefix))),
+        ]);
+      },
+      values: () {
+        return TypeWithIntersection.getBox().keys.map((key) => TypeWithIntersection.getBox().get(key)!);
+      },
+      keys: () {
+        List<List<String>> keys = [];
+        keys.add(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => key.replace(basicTypeKeyPrefix, "")))
+        keys.add(typeWithIntersectionMainIntersectionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithIntersectionMainIntersectionTypeKeyPrefix)).map((key) => key.replace(typeWithIntersectionMainIntersectionTypeKeyPrefix, "")))
+        final map = Map<String, int>();
+        for (final keyList in keys){
+          keyList.forEach((item) => map[item] = map.containsKey(item)? (map[item]! + 1): 1);
+        }
+        return map.keys.where((key) => map[key] == keys.length);
+      },
+    );
   }
 
   BasicType asBasicType(){
@@ -361,6 +429,7 @@ class TypeWithMultipleIntersection {
       typeWithMultipleIntersectionMainIntersectionType
     ];
   }
+
 
   BasicType asBasicType(){
     return this._values[0] as BasicType;
