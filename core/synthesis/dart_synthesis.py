@@ -461,30 +461,18 @@ def _union_of_primitive_type(a, b):
 def _get_models_boxes_text(use_hive, class_name, is_union=False, is_intersection=False):
     if (use_hive == False):
         return ''
-    models_box_type = class_name
+    stored_models_box_type = class_name
+    box_value_to_value = 'value'
+    value_to_box_value = 'value'
     if (is_union or is_intersection):
-        models_box_type = 'String'
-    models_box_put_suffix = ''
-    models_box_get_text = ' => box.get(key)'
-    models_box_values_text = 'box.values'
-    if (is_union or is_intersection):
-        models_box_put_suffix = '.toJson()'
-        models_box_get_text = '{\n' + \
-                              '        final value = box.get(key);\n' + \
-                              '        if(value==null) return null;\n' + \
-                              '        return ' + class_name + '.fromJson(value);\n' + \
-                              '      }'
-        models_box_values_text = models_box_values_text + \
-            '.map((e) => '+class_name+'.fromJson(e))'
-    return '  static ModelsBox<' + class_name + '> getBox() {\n' + \
-           '    final box = Hive.box<' + models_box_type + '>(' + 'HiveTypeIds.' + class_name + '.toString());\n' + \
-           '    return ModelsBox<' + class_name + '>(\n' + \
-           '      get: (key) '+models_box_get_text+',\n' + \
-           '      put: (key, value) => box.put(key, ' 'value' + models_box_put_suffix + '),\n' + \
-           '      delete: (key) => box.delete(key),\n' + \
-           '      clear: () => box.clear(),\n' + \
-           '      values: () => '+models_box_values_text+',\n' + \
-           '      keys: () => box.keys,\n' + \
+        stored_models_box_type = 'String'
+        box_value_to_value = class_name + '.fromJson(json.decode(value))'
+        value_to_box_value = 'json.encode(' + class_name + '.toJson())'
+    return '  static ModelsBox<' + class_name + ', ' + stored_models_box_type + '> getBox() {\n' + \
+           '    return ModelsBox<' + class_name + ', ' + stored_models_box_type + '>(\n' + \
+           '      boxKey: HiveTypeIds.' + class_name + '.toString(),\n' + \
+           '      boxValueToValue: (value) => ' + box_value_to_value + ',\n' + \
+           '      valueToBoxValue: (value) => ' + value_to_box_value + ',\n' + \
            '    );\n' + \
            '  }\n\n'
 
