@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package:dartz/dartz.dart';
 import './hive_type_ids.dart';
 import './index.dart';
+import 'dart:convert';
 
 part 'initial.freezed.dart';
 part 'initial.g.dart';
@@ -11,15 +12,11 @@ part 'initial.g.dart';
 /// Basic type 
 @freezed
 class BasicType with _$BasicType {
-  static ModelsBox<BasicType> getBox() {
-    final box = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
-    return ModelsBox<BasicType>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<BasicType, BasicType> getBox() {
+    return ModelsBox<BasicType, BasicType>(
+      boxKey: HiveTypeIds.BasicType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
@@ -124,15 +121,11 @@ class TypeWithUnion{
 
 @freezed
 class TypeWithMultipleUnionMainUnionType with _$TypeWithMultipleUnionMainUnionType {
-  static ModelsBox<TypeWithMultipleUnionMainUnionType> getBox() {
-    final box = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
-    return ModelsBox<TypeWithMultipleUnionMainUnionType>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<TypeWithMultipleUnionMainUnionType, TypeWithMultipleUnionMainUnionType> getBox() {
+    return ModelsBox<TypeWithMultipleUnionMainUnionType, TypeWithMultipleUnionMainUnionType>(
+      boxKey: HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
@@ -190,19 +183,11 @@ class TypeWithMultipleUnion{
     )!;
   }
 
-  static ModelsBox<TypeWithMultipleUnion> getBox() {
-    final box = Hive.box<String>(HiveTypeIds.TypeWithMultipleUnion.toString());
-    return ModelsBox<TypeWithMultipleUnion>(
-      get: (key) {
-        final value = box.get(key);
-        if(value==null) return null;
-        return TypeWithMultipleUnion.fromJson(value);
-      },
-      put: (key, value) => box.put(key, value.toJson()),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values.map((e) => TypeWithMultipleUnion.fromJson(e)),
-      keys: () => box.keys,
+  static ModelsBox<TypeWithMultipleUnion, String> getBox() {
+    return ModelsBox<TypeWithMultipleUnion, String>(
+      boxKey: HiveTypeIds.TypeWithMultipleUnion.toString(),
+      boxValueToValue: (value) => TypeWithMultipleUnion.fromJson(json.decode(value)),
+      valueToBoxValue: (value) => json.encode(TypeWithMultipleUnion.toJson()),
     );
   }
 
@@ -235,15 +220,11 @@ class TypeWithMultipleUnion{
 
 @freezed
 class TypeWithIntersectionMainIntersectionType with _$TypeWithIntersectionMainIntersectionType {
-  static ModelsBox<TypeWithIntersectionMainIntersectionType> getBox() {
-    final box = Hive.box<TypeWithIntersectionMainIntersectionType>(HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString());
-    return ModelsBox<TypeWithIntersectionMainIntersectionType>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<TypeWithIntersectionMainIntersectionType, TypeWithIntersectionMainIntersectionType> getBox() {
+    return ModelsBox<TypeWithIntersectionMainIntersectionType, TypeWithIntersectionMainIntersectionType>(
+      boxKey: HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
@@ -279,19 +260,11 @@ class TypeWithIntersection {
     ];
   }
 
-  static ModelsBox<TypeWithIntersection> getBox() {
-    final box = Hive.box<String>(HiveTypeIds.TypeWithIntersection.toString());
-    return ModelsBox<TypeWithIntersection>(
-      get: (key) {
-        final value = box.get(key);
-        if(value==null) return null;
-        return TypeWithIntersection.fromJson(value);
-      },
-      put: (key, value) => box.put(key, value.toJson()),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values.map((e) => TypeWithIntersection.fromJson(e)),
-      keys: () => box.keys,
+  static ModelsBox<TypeWithIntersection, String> getBox() {
+    return ModelsBox<TypeWithIntersection, String>(
+      boxKey: HiveTypeIds.TypeWithIntersection.toString(),
+      boxValueToValue: (value) => TypeWithIntersection.fromJson(json.decode(value)),
+      valueToBoxValue: (value) => json.encode(TypeWithIntersection.toJson()),
     );
   }
 
@@ -356,15 +329,11 @@ class TypeWithMultipleIntersection {
 /// Nested type 
 @freezed
 class NestedType with _$NestedType {
-  static ModelsBox<NestedType> getBox() {
-    final box = Hive.box<NestedType>(HiveTypeIds.NestedType.toString());
-    return ModelsBox<NestedType>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<NestedType, NestedType> getBox() {
+    return ModelsBox<NestedType, NestedType>(
+      boxKey: HiveTypeIds.NestedType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
@@ -385,15 +354,11 @@ class NestedType with _$NestedType {
 /// additional type of field c from class NestedType 
 @freezed
 class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
-  static ModelsBox<cAdditionalTypeNestedType> getBox() {
-    final box = Hive.box<cAdditionalTypeNestedType>(HiveTypeIds.cAdditionalTypeNestedType.toString());
-    return ModelsBox<cAdditionalTypeNestedType>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<cAdditionalTypeNestedType, cAdditionalTypeNestedType> getBox() {
+    return ModelsBox<cAdditionalTypeNestedType, cAdditionalTypeNestedType>(
+      boxKey: HiveTypeIds.cAdditionalTypeNestedType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
@@ -431,15 +396,11 @@ enum EnumWithDefinedNumbersOnOptions{
 /// Type with internal enum 
 @freezed
 class TypeWithInternalEnum with _$TypeWithInternalEnum {
-  static ModelsBox<TypeWithInternalEnum> getBox() {
-    final box = Hive.box<TypeWithInternalEnum>(HiveTypeIds.TypeWithInternalEnum.toString());
-    return ModelsBox<TypeWithInternalEnum>(
-      get: (key)  => box.get(key),
-      put: (key, value) => box.put(key, value),
-      delete: (key) => box.delete(key),
-      clear: () => box.clear(),
-      values: () => box.values,
-      keys: () => box.keys,
+  static ModelsBox<TypeWithInternalEnum, TypeWithInternalEnum> getBox() {
+    return ModelsBox<TypeWithInternalEnum, TypeWithInternalEnum>(
+      boxKey: HiveTypeIds.TypeWithInternalEnum.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
     );
   }
 
