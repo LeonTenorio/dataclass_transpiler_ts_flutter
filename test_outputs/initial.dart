@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package:dartz/dartz.dart';
 import './hive_type_ids.dart';
 import './index.dart';
+import 'dart:convert';
 
 part 'initial.freezed.dart';
 part 'initial.g.dart';
@@ -11,6 +12,14 @@ part 'initial.g.dart';
 /// Basic type 
 @freezed
 class BasicType with _$BasicType {
+  static ModelsBox<BasicType, BasicType> getBox() {
+    return ModelsBox<BasicType, BasicType>(
+      boxKey: HiveTypeIds.BasicType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.BasicType)
   const factory BasicType({
     /// Basic type a object field comment 
@@ -81,11 +90,22 @@ class TypeWithUnion{
     }
   }
 
+  TypeWithUnion.fromValue({
+    BasicType? basicType,
+    TypeWithUnionMainUnionType? typeWithUnionMainUnionType,
+  }){
+    _value = (
+      basicType??
+      typeWithUnionMainUnionType
+    )!;
+  }
+
+
   bool isBasicType() {
     return _value is BasicType;
   }
 
-  TypeWithUnion asBasicType(){
+  BasicType asBasicType(){
     return _value as BasicType;
   }
 
@@ -93,7 +113,7 @@ class TypeWithUnion{
     return _value is TypeWithUnionMainUnionType;
   }
 
-  TypeWithUnion asTypeWithUnionMainUnionType(){
+  TypeWithUnionMainUnionType asTypeWithUnionMainUnionType(){
     return _value as TypeWithUnionMainUnionType;
   }
 
@@ -101,6 +121,14 @@ class TypeWithUnion{
 
 @freezed
 class TypeWithMultipleUnionMainUnionType with _$TypeWithMultipleUnionMainUnionType {
+  static ModelsBox<TypeWithMultipleUnionMainUnionType, TypeWithMultipleUnionMainUnionType> getBox() {
+    return ModelsBox<TypeWithMultipleUnionMainUnionType, TypeWithMultipleUnionMainUnionType>(
+      boxKey: HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   const factory TypeWithMultipleUnionMainUnionType({
     required String c,
     required String d,
@@ -143,11 +171,32 @@ class TypeWithMultipleUnion{
     }
   }
 
+  TypeWithMultipleUnion.fromValue({
+    BasicType? basicType,
+    BasicTypeWithNullableAndOptional? basicTypeWithNullableAndOptional,
+    TypeWithMultipleUnionMainUnionType? typeWithMultipleUnionMainUnionType,
+  }){
+    _value = (
+      basicType??
+      basicTypeWithNullableAndOptional??
+      typeWithMultipleUnionMainUnionType
+    )!;
+  }
+
+  static ModelsBox<TypeWithMultipleUnion, String> getBox() {
+    return ModelsBox<TypeWithMultipleUnion, String>(
+      boxKey: HiveTypeIds.TypeWithMultipleUnion.toString(),
+      boxValueToValue: (value) => TypeWithMultipleUnion.fromJson(json.decode(value)),
+      valueToBoxValue: (value) => json.encode(TypeWithMultipleUnion.toJson()),
+    );
+  }
+
+
   bool isBasicType() {
     return _value is BasicType;
   }
 
-  TypeWithMultipleUnion asBasicType(){
+  BasicType asBasicType(){
     return _value as BasicType;
   }
 
@@ -155,7 +204,7 @@ class TypeWithMultipleUnion{
     return _value is BasicTypeWithNullableAndOptional;
   }
 
-  TypeWithMultipleUnion asBasicTypeWithNullableAndOptional(){
+  BasicTypeWithNullableAndOptional asBasicTypeWithNullableAndOptional(){
     return _value as BasicTypeWithNullableAndOptional;
   }
 
@@ -163,7 +212,7 @@ class TypeWithMultipleUnion{
     return _value is TypeWithMultipleUnionMainUnionType;
   }
 
-  TypeWithMultipleUnion asTypeWithMultipleUnionMainUnionType(){
+  TypeWithMultipleUnionMainUnionType asTypeWithMultipleUnionMainUnionType(){
     return _value as TypeWithMultipleUnionMainUnionType;
   }
 
@@ -171,6 +220,14 @@ class TypeWithMultipleUnion{
 
 @freezed
 class TypeWithIntersectionMainIntersectionType with _$TypeWithIntersectionMainIntersectionType {
+  static ModelsBox<TypeWithIntersectionMainIntersectionType, TypeWithIntersectionMainIntersectionType> getBox() {
+    return ModelsBox<TypeWithIntersectionMainIntersectionType, TypeWithIntersectionMainIntersectionType>(
+      boxKey: HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   const factory TypeWithIntersectionMainIntersectionType({
     required String e,
   }) = _TypeWithIntersectionMainIntersectionType;
@@ -192,6 +249,25 @@ class TypeWithIntersection {
   Map<String, dynamic> toJson(){
     return this._values.map((e) => (e as dynamic).toJson()).reduce((a, b) => a..addAll(b));
   }
+
+  TypeWithIntersection.fromValues({
+    required BasicType basicType,
+    required TypeWithIntersectionMainIntersectionType typeWithIntersectionMainIntersectionType,
+  }){
+    _values = [
+      basicType,
+      typeWithIntersectionMainIntersectionType
+    ];
+  }
+
+  static ModelsBox<TypeWithIntersection, String> getBox() {
+    return ModelsBox<TypeWithIntersection, String>(
+      boxKey: HiveTypeIds.TypeWithIntersection.toString(),
+      boxValueToValue: (value) => TypeWithIntersection.fromJson(json.decode(value)),
+      valueToBoxValue: (value) => json.encode(TypeWithIntersection.toJson()),
+    );
+  }
+
 
   BasicType asBasicType(){
     return this._values[0] as BasicType;
@@ -226,6 +302,19 @@ class TypeWithMultipleIntersection {
     return this._values.map((e) => (e as dynamic).toJson()).reduce((a, b) => a..addAll(b));
   }
 
+  TypeWithMultipleIntersection.fromValues({
+    required BasicType basicType,
+    required BasicTypeWithNullableAndOptional basicTypeWithNullableAndOptional,
+    required TypeWithMultipleIntersectionMainIntersectionType typeWithMultipleIntersectionMainIntersectionType,
+  }){
+    _values = [
+      basicType,
+      basicTypeWithNullableAndOptional,
+      typeWithMultipleIntersectionMainIntersectionType
+    ];
+  }
+
+
   BasicType asBasicType(){
     return this._values[0] as BasicType;
   }
@@ -240,6 +329,14 @@ class TypeWithMultipleIntersection {
 /// Nested type 
 @freezed
 class NestedType with _$NestedType {
+  static ModelsBox<NestedType, NestedType> getBox() {
+    return ModelsBox<NestedType, NestedType>(
+      boxKey: HiveTypeIds.NestedType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.NestedType)
   const factory NestedType({
     required String a,
@@ -257,6 +354,14 @@ class NestedType with _$NestedType {
 /// additional type of field c from class NestedType 
 @freezed
 class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
+  static ModelsBox<cAdditionalTypeNestedType, cAdditionalTypeNestedType> getBox() {
+    return ModelsBox<cAdditionalTypeNestedType, cAdditionalTypeNestedType>(
+      boxKey: HiveTypeIds.cAdditionalTypeNestedType.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.cAdditionalTypeNestedType)
   const factory cAdditionalTypeNestedType({
     required String a,
@@ -291,6 +396,14 @@ enum EnumWithDefinedNumbersOnOptions{
 /// Type with internal enum 
 @freezed
 class TypeWithInternalEnum with _$TypeWithInternalEnum {
+  static ModelsBox<TypeWithInternalEnum, TypeWithInternalEnum> getBox() {
+    return ModelsBox<TypeWithInternalEnum, TypeWithInternalEnum>(
+      boxKey: HiveTypeIds.TypeWithInternalEnum.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
   @HiveTypeId(typeId: HiveTypeIds.TypeWithInternalEnum)
   const factory TypeWithInternalEnum({
     required String a,

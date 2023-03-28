@@ -29,3 +29,6 @@ def reduce_array(array, reduce_two_elements):
 
 def replace_all(source, expression, new_value):
     return new_value.join(source.split(expression))
+
+def low_case_first_letter(text):
+    return text[0].lower() + text[1:]

@@ -59,6 +59,8 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
         dart_imports = _add_if_not_in_list('./hive_type_ids.dart', dart_imports)
     if(has_dart_class_import):
         dart_imports = _add_if_not_in_list('./index.dart', dart_imports)
+    if('json.' in dart_text):
+        dart_imports = _add_if_not_in_list('dart:convert', dart_imports)
 
     dart_text = map_and_join_array(dart_imports, lambda x: "import '" + x + "';", lambda array: '\n'.join(array)) + dart_text
 
