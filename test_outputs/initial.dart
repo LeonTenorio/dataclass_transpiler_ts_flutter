@@ -14,17 +14,12 @@ class BasicType with _$BasicType {
   static ModelsBox<BasicType> getBox() {
     final box = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
     return ModelsBox<BasicType>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
@@ -132,17 +127,12 @@ class TypeWithMultipleUnionMainUnionType with _$TypeWithMultipleUnionMainUnionTy
   static ModelsBox<TypeWithMultipleUnionMainUnionType> getBox() {
     final box = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
     return ModelsBox<TypeWithMultipleUnionMainUnionType>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
@@ -201,60 +191,21 @@ class TypeWithMultipleUnion{
   }
 
   static ModelsBox<TypeWithMultipleUnion> getBox() {
-    final basicTypeKeyPrefix =  "_union-TypeWithMultipleUnion-BasicType";
-    final basicTypeWithNullableAndOptionalKeyPrefix =  "_union-TypeWithMultipleUnion-BasicTypeWithNullableAndOptional";
-    final typeWithMultipleUnionMainUnionTypeKeyPrefix =  "_union-TypeWithMultipleUnion-TypeWithMultipleUnionMainUnionType";
-    final basicTypeBox = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
-    final basicTypeWithNullableAndOptionalBox = Hive.box<BasicTypeWithNullableAndOptional>(HiveTypeIds.BasicTypeWithNullableAndOptional.toString());
-    final typeWithMultipleUnionMainUnionTypeBox = Hive.box<TypeWithMultipleUnionMainUnionType>(HiveTypeIds.TypeWithMultipleUnionMainUnionType.toString());
+    final box = Hive.box<String>(HiveTypeIds.TypeWithMultipleUnion.toString());
     return ModelsBox<TypeWithMultipleUnion>(
-      get: (key) { 
-        final basicTypeBoxValue = basicTypeBox.get(basicTypeKeyPrefix + key);
-        final basicTypeWithNullableAndOptionalBoxValue = basicTypeWithNullableAndOptionalBox.get(basicTypeWithNullableAndOptionalKeyPrefix + key);
-        final typeWithMultipleUnionMainUnionTypeBoxValue = typeWithMultipleUnionMainUnionTypeBox.get(typeWithMultipleUnionMainUnionTypeKeyPrefix + key);
-        return TypeWithMultipleUnion.fromValue(
-          basicType: basicTypeBoxValue,
-          basicTypeWithNullableAndOptional: basicTypeWithNullableAndOptionalBoxValue,
-          typeWithMultipleUnionMainUnionType: typeWithMultipleUnionMainUnionTypeBoxValue,
-        );
+      get: (key) {
+        final value = box.get(key);
+        if(value==null) return null;
+        return TypeWithMultipleUnion.fromJson(value);
       },
-      put: (key, value) async {
-        if (value is BasicType) {
-          await basicTypeBox.put(basicTypeKeyPrefix + key, value);
-        }
-        if (value is BasicTypeWithNullableAndOptional) {
-          await basicTypeWithNullableAndOptionalBox.put(basicTypeWithNullableAndOptionalKeyPrefix + key, value);
-        }
-        if (value is TypeWithMultipleUnionMainUnionType) {
-          await typeWithMultipleUnionMainUnionTypeBox.put(typeWithMultipleUnionMainUnionTypeKeyPrefix + key, value);
-        }
-      },
-      delete: (key) async {
-        await Future.wait([
-          basicTypeBox.delete(basicTypeKeyPrefixkey),
-          basicTypeWithNullableAndOptionalBox.delete(basicTypeWithNullableAndOptionalKeyPrefixkey),
-          typeWithMultipleUnionMainUnionTypeBox.delete(typeWithMultipleUnionMainUnionTypeKeyPrefixkey),
-        ]);
-      },
-      clear: () async {
-        await Future.wait([
-          basicTypeBox.deleteAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix))),
-          basicTypeWithNullableAndOptionalBox.deleteAll(basicTypeWithNullableAndOptionalBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix))),
-          typeWithMultipleUnionMainUnionTypeBox.deleteAll(typeWithMultipleUnionMainUnionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix))),
-        ]);
-      },
-      values: () {
-        return TypeWithMultipleUnion.getBox().keys.map((key) => TypeWithMultipleUnion.getBox().get(key)!);
-      },
-      keys: () {
-        List<String> keys = [];
-        keys.addAll(basicTypeBox.keys((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => key.replace(basicTypeKeyPrefix, "")))
-        keys.addAll(basicTypeWithNullableAndOptionalBox.keys((key) => key as String).where((key) => key.startsWith(basicTypeWithNullableAndOptionalKeyPrefix)).map((key) => key.replace(basicTypeWithNullableAndOptionalKeyPrefix, "")))
-        keys.addAll(typeWithMultipleUnionMainUnionTypeBox.keys((key) => key as String).where((key) => key.startsWith(typeWithMultipleUnionMainUnionTypeKeyPrefix)).map((key) => key.replace(typeWithMultipleUnionMainUnionTypeKeyPrefix, "")))
-        return Iterable.castFrom<String, String>(keys);
-      },
+      put: (key, value) => box.put(key, value.toJson()),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values.map((e) => TypeWithMultipleUnion.fromJson(e)),
+      keys: () => box.keys,
     );
   }
+
 
   bool isBasicType() {
     return _value is BasicType;
@@ -287,17 +238,12 @@ class TypeWithIntersectionMainIntersectionType with _$TypeWithIntersectionMainIn
   static ModelsBox<TypeWithIntersectionMainIntersectionType> getBox() {
     final box = Hive.box<TypeWithIntersectionMainIntersectionType>(HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString());
     return ModelsBox<TypeWithIntersectionMainIntersectionType>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
@@ -334,56 +280,21 @@ class TypeWithIntersection {
   }
 
   static ModelsBox<TypeWithIntersection> getBox() {
-    final basicTypeKeyPrefix =  "_intersection-TypeWithIntersection-BasicType";
-    final typeWithIntersectionMainIntersectionTypeKeyPrefix =  "_intersection-TypeWithIntersection-TypeWithIntersectionMainIntersectionType";
-    final basicTypeBox = Hive.box<BasicType>(HiveTypeIds.BasicType.toString());
-    final typeWithIntersectionMainIntersectionTypeBox = Hive.box<TypeWithIntersectionMainIntersectionType>(HiveTypeIds.TypeWithIntersectionMainIntersectionType.toString());
+    final box = Hive.box<String>(HiveTypeIds.TypeWithIntersection.toString());
     return ModelsBox<TypeWithIntersection>(
-      get: (key) { 
-        final basicTypeBoxValue = basicTypeBox.get(basicTypeKeyPrefix + key);
-        if(basicTypeBoxValue== null){;
-          return null;
-        };
-        final typeWithIntersectionMainIntersectionTypeBoxValue = typeWithIntersectionMainIntersectionTypeBox.get(typeWithIntersectionMainIntersectionTypeKeyPrefix + key);
-        if(typeWithIntersectionMainIntersectionTypeBoxValue== null){;
-          return null;
-        };
-        return TypeWithIntersection.fromValues(
-          basicType: basicTypeBoxValue,
-          typeWithIntersectionMainIntersectionType: typeWithIntersectionMainIntersectionTypeBoxValue,
-        );
+      get: (key) {
+        final value = box.get(key);
+        if(value==null) return null;
+        return TypeWithIntersection.fromJson(value);
       },
-      put: (key, value) async {
-        await basicTypeBox.put(basicTypeKeyPrefix + key, value._values[0]);
-        await typeWithIntersectionMainIntersectionTypeBox.put(typeWithIntersectionMainIntersectionTypeKeyPrefix + key, value._values[1]);
-      },
-      delete: (key) async {
-        await Future.wait([
-          basicTypeBox.delete(basicTypeKeyPrefixkey),
-          typeWithIntersectionMainIntersectionTypeBox.delete(typeWithIntersectionMainIntersectionTypeKeyPrefixkey),
-        ]);
-      },
-      clear: () async {
-        await Future.wait([
-          basicTypeBox.deleteAll(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix))),
-          typeWithIntersectionMainIntersectionTypeBox.deleteAll(typeWithIntersectionMainIntersectionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithIntersectionMainIntersectionTypeKeyPrefix))),
-        ]);
-      },
-      values: () {
-        return TypeWithIntersection.getBox().keys.map((key) => TypeWithIntersection.getBox().get(key)!);
-      },
-      keys: () {
-        List<List<String>> keys = [];
-        keys.add(basicTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(basicTypeKeyPrefix)).map((key) => key.replace(basicTypeKeyPrefix, "")))
-        keys.add(typeWithIntersectionMainIntersectionTypeBox.keys.map((key) => key as String).where((key) => key.startsWith(typeWithIntersectionMainIntersectionTypeKeyPrefix)).map((key) => key.replace(typeWithIntersectionMainIntersectionTypeKeyPrefix, "")))
-        final map = Map<String, int>();
-        for (final keyList in keys){
-          keyList.forEach((item) => map[item] = map.containsKey(item)? (map[item]! + 1): 1);
-        }
-        return map.keys.where((key) => map[key] == keys.length);
-      },
+      put: (key, value) => box.put(key, value.toJson()),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values.map((e) => TypeWithIntersection.fromJson(e)),
+      keys: () => box.keys,
     );
   }
+
 
   BasicType asBasicType(){
     return this._values[0] as BasicType;
@@ -448,17 +359,12 @@ class NestedType with _$NestedType {
   static ModelsBox<NestedType> getBox() {
     final box = Hive.box<NestedType>(HiveTypeIds.NestedType.toString());
     return ModelsBox<NestedType>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
@@ -482,17 +388,12 @@ class cAdditionalTypeNestedType with _$cAdditionalTypeNestedType {
   static ModelsBox<cAdditionalTypeNestedType> getBox() {
     final box = Hive.box<cAdditionalTypeNestedType>(HiveTypeIds.cAdditionalTypeNestedType.toString());
     return ModelsBox<cAdditionalTypeNestedType>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
@@ -533,17 +434,12 @@ class TypeWithInternalEnum with _$TypeWithInternalEnum {
   static ModelsBox<TypeWithInternalEnum> getBox() {
     final box = Hive.box<TypeWithInternalEnum>(HiveTypeIds.TypeWithInternalEnum.toString());
     return ModelsBox<TypeWithInternalEnum>(
-      get: (key) => key.startsWith("_")? null: box.get(key),
+      get: (key)  => box.get(key),
       put: (key, value) => box.put(key, value),
-      delete: (key) async {
-        if(key.startsWith("_")) return;
-        await box.delete(key);
-      },
-      clear: () async {
-        await box.deleteAll(box.keys.map((key) => key as String).where((key) => !key.startsWith("_")));
-      },
-      values: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")).map(box.get),
-      keys: () => box.keys.map((key) => key as String).where((key) => !key.startsWith("_")),
+      delete: (key) => box.delete(key),
+      clear: () => box.clear(),
+      values: () => box.values,
+      keys: () => box.keys,
     );
   }
 
