@@ -123,3 +123,14 @@
                 comment: Two
     exportable: True
     useHive: True
+
+- BasicTypeWithFixedEnumField:
+    comment: Basic type
+    type:
+      a:
+        comment: Basic type a object field comment
+        type: string
+      b:
+        type: SimpleEnum.one
+    exportable: True
+    useHive: True
