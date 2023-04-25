@@ -55,10 +55,10 @@ def synthesis_yaml_definition(yaml_definition, output_folder_path):
         dart_imports = _add_if_not_in_list('./core/datetime_converter.dart', dart_imports)
     if('Tuple2' in dart_text):
         dart_imports = _add_if_not_in_list('package:package:dartz/dartz.dart', dart_imports)
-    if('HiveTypeIds.' in dart_text):
-        dart_imports = _add_if_not_in_list('./hive_type_ids.dart', dart_imports)
     if(has_dart_class_import):
         dart_imports = _add_if_not_in_list('./index.dart', dart_imports)
+    elif('HiveTypeIds.' in dart_text):
+        dart_imports = _add_if_not_in_list('./hive_type_ids.dart', dart_imports)
     if('json.' in dart_text):
         dart_imports = _add_if_not_in_list('dart:convert', dart_imports)
 
