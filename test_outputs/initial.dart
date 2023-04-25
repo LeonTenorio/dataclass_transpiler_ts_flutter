@@ -34,7 +34,6 @@ class BasicType with _$BasicType {
     _$BasicTypeFromJson(json);
 }
 
-@freezed
 class BasicTypeWithNullableAndOptional with _$BasicTypeWithNullableAndOptional {
   const factory BasicTypeWithNullableAndOptional({
     required String ? a,
@@ -48,7 +47,6 @@ class BasicTypeWithNullableAndOptional with _$BasicTypeWithNullableAndOptional {
     _$BasicTypeWithNullableAndOptionalFromJson(json);
 }
 
-@freezed
 class TypeWithUnionMainUnionType with _$TypeWithUnionMainUnionType {
   const factory TypeWithUnionMainUnionType({
     required String c,
@@ -277,7 +275,6 @@ class TypeWithIntersection {
   }
 }
 
-@freezed
 class TypeWithMultipleIntersectionMainIntersectionType with _$TypeWithMultipleIntersectionMainIntersectionType {
   const factory TypeWithMultipleIntersectionMainIntersectionType({
     required String e,
@@ -427,4 +424,54 @@ enum cEnum{
   @JsonValue(2)
   @HiveField(2)
   two,
+}
+
+/// Basic type 
+@freezed
+class BasicTypeWithFixedEnumField with _$BasicTypeWithFixedEnumField {
+  static ModelsBox<BasicTypeWithFixedEnumField, BasicTypeWithFixedEnumField> getBox() {
+    return ModelsBox<BasicTypeWithFixedEnumField, BasicTypeWithFixedEnumField>(
+      boxKey: HiveTypeIds.BasicTypeWithFixedEnumField.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
+  @Assert('b == SimpleEnum.one')
+  @HiveTypeId(typeId: HiveTypeIds.BasicTypeWithFixedEnumField)
+  const factory BasicTypeWithFixedEnumField({
+    /// Basic type a object field comment 
+    required String a,
+    required SimpleEnum b,
+  }) = _BasicTypeWithFixedEnumField;
+
+  factory BasicTypeWithFixedEnumField.fromJson(
+    Map<String, dynamic> json,
+  ) => 
+    _$BasicTypeWithFixedEnumFieldFromJson(json);
+}
+
+/// Basic type 
+@freezed
+class BasicTypeWithTwoFixedEnumField with _$BasicTypeWithTwoFixedEnumField {
+  static ModelsBox<BasicTypeWithTwoFixedEnumField, BasicTypeWithTwoFixedEnumField> getBox() {
+    return ModelsBox<BasicTypeWithTwoFixedEnumField, BasicTypeWithTwoFixedEnumField>(
+      boxKey: HiveTypeIds.BasicTypeWithTwoFixedEnumField.toString(),
+      boxValueToValue: (value) => value,
+      valueToBoxValue: (value) => value,
+    );
+  }
+
+  @Assert('b == SimpleEnum.one | SimpleEnum.two')
+  @HiveTypeId(typeId: HiveTypeIds.BasicTypeWithTwoFixedEnumField)
+  const factory BasicTypeWithTwoFixedEnumField({
+    /// Basic type a object field comment 
+    required String a,
+    required SimpleEnum b,
+  }) = _BasicTypeWithTwoFixedEnumField;
+
+  factory BasicTypeWithTwoFixedEnumField.fromJson(
+    Map<String, dynamic> json,
+  ) => 
+    _$BasicTypeWithTwoFixedEnumFieldFromJson(json);
 }

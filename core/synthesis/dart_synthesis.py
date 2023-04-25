@@ -23,7 +23,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
     class_type_definition = element_definition.class_type
     class_comment = element_definition.comment
 
-    element_text = _create_comment(class_comment)
+    element_text = ''
 
     additional_text = ''
 
@@ -35,6 +35,8 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
     intersection_class_name = None
 
     element_definition_enum = element_definition.enum
+
+    class_assertions = []
 
     if (element_definition_enum != None):
         element_text = element_text + \
@@ -48,8 +50,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
         if (class_type_definition_object_fields != None):
             main_class_name = element_name
 
-            element_text = element_text + '@freezed\n' + \
-                'class ' + element_name + ' with _$' + element_name + ' {\n'
+            element_text = element_text + 'class ' + element_name + ' with _$' + element_name + ' {\n'
 
             element_text = element_text + \
                 _get_models_boxes_text(use_hive, element_name)
@@ -58,7 +59,7 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 '  const factory ' + element_name + '({\n'
 
             for field in class_type_definition_object_fields:
-                field_text, field_additional_text = _get_text_of_type_field_definition(
+                field_text, field_additional_text, field_assertion = _get_text_of_type_field_definition(
                     field,
                     element_name,
                     use_hive,
@@ -66,6 +67,17 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 )
                 element_text = element_text + field_text + ',\n'
                 additional_text = additional_text + field_additional_text
+
+                if(field_assertion!=None):
+                    class_assertions.append(field_assertion)
+
+            if(len(class_assertions)>0):
+                assert_text = '  @Assert(\'' + map_and_join_array(
+                    class_assertions,
+                    lambda x: x[0] + ' ' + x[1] + ' ' + x[2],
+                    lambda array: ' || '.join(array)
+                ) + '\')\n'
+                element_text = replace_all(element_text, '  const factory '+element_name, assert_text + '  const factory '+element_name)
 
             element_text = element_text + '  }) = _' + element_name + ';\n\n' + \
                 '  factory ' + element_name + '.fromJson(\n' + \
@@ -254,6 +266,11 @@ def _get_dart_text_of_element(element_definition, dart_hive_type_ids):
                 text_to_find
             )
 
+    if(use_hive):
+        element_text = '@freezed\n' + element_text
+
+    element_text = _create_comment(class_comment) + element_text
+    
     result_text = '\n' + element_text
     if (len(additional_text) > 0):
         result_text = result_text + '\n' + additional_text
@@ -330,6 +347,8 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
     field_text = field_text + \
         _create_comment(field_comment, line_indentation='    ') + '    '
 
+    field_assertion = None
+
     if (type_field_definition.optional == False):
         field_text = field_text + 'required '
     if (enum_definition != None):
@@ -341,6 +360,9 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
     elif (type_definition.simple_type != None):
         field_text = field_text + \
             _get_dart_simple_type(type_definition.simple_type) + ' '
+        
+        if('.' in type_definition.simple_type):
+            field_assertion = [field_name, '==', type_definition.simple_type]
     else:
         additional_field_type_name = field_name + 'AdditionalType' + father_class_name
         field_text = field_text + additional_field_type_name + ' '
@@ -365,7 +387,7 @@ def _get_text_of_type_field_definition(type_field_definition, father_class_name,
         field_text = field_text + '? '
     field_text = field_text + field_name
 
-    return field_text, additional_text
+    return field_text, additional_text, field_assertion
 
 
 def _create_new_element_definition(name, class_type, comment, exportable, use_hive, ts_validation):
@@ -400,6 +422,8 @@ def _get_dart_simple_type(type):
         return 'DateTime'
     elif (type == reserved_string):
         return 'String'
+    elif ('.' in type):
+        return type.split('.')[0]
     return type
 
 

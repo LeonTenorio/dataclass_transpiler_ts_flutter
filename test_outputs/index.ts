@@ -9,4 +9,6 @@ export {
   SimpleEnum,
   EnumWithDefinedNumbersOnOptions,
   TypeWithInternalEnum,
+  BasicTypeWithFixedEnumField,
+  BasicTypeWithTwoFixedEnumField,
 } from './initial';
