@@ -134,3 +134,14 @@
         type: SimpleEnum.one
     exportable: True
     useHive: True
+
+- BasicTypeWithTwoFixedEnumField:
+    comment: Basic type
+    type:
+      a:
+        comment: Basic type a object field comment
+        type: string
+      b:
+        type: SimpleEnum.one | SimpleEnum.two
+    exportable: True
+    useHive: True
