@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package:dartz/dartz.dart';
-import './hive_type_ids.dart';
 import './index.dart';
 import 'dart:convert';
 
