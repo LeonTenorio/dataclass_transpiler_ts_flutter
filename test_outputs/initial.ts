@@ -101,3 +101,13 @@ export type BasicTypeWithFixedEnumField = {
   a: string;
   b: SimpleEnum.one;
 };
+/**
+ * Basic type 
+ */
+export type BasicTypeWithTwoFixedEnumField = {
+  /**
+   * Basic type a object field comment 
+   */
+  a: string;
+  b: SimpleEnum.one | SimpleEnum.two;
+};

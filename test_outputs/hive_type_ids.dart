@@ -8,4 +8,5 @@ class HiveTypeIds {
   static const int TypeWithInternalEnum = 6;
   static const int TypeWithIntersectionMainIntersectionType = 7;
   static const int BasicTypeWithFixedEnumField = 8;
+  static const int BasicTypeWithTwoFixedEnumField = 9;
 }
