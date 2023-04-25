@@ -422,6 +422,8 @@ def _get_dart_simple_type(type):
         return 'DateTime'
     elif (type == reserved_string):
         return 'String'
+    elif ('.' in type):
+        return type.split('.')[0]
     return type
 
 
